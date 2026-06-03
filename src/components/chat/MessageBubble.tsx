@@ -7,11 +7,26 @@ import {
   Image,
   Alert,
   Pressable,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
 import { ImageViewer } from './ImageViewer';
 import { VoicePlayer } from './VoicePlayer';
+
+// 与 H5 版本匹配的颜色
+const Colors = {
+  primary: '#3b82f6',
+  slate50: '#f8fafc',
+  slate100: '#f1f5f9',
+  slate200: '#e2e8f0',
+  slate400: '#94a3b8',
+  slate700: '#475569',
+  slate800: '#1e293b',
+  white: '#ffffff',
+  red400: '#f87171',
+  red500: '#ef4444',
+};
 
 interface MessageBubbleProps {
   message: Message;
@@ -31,10 +46,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   const handleLongPress = () => {
     setShowMenu(true);
-    // 触觉反馈
-    if (Platform.OS === 'ios') {
-      // iOS 震动反馈（如果支持）
-    }
   };
 
   const handleRecall = () => {
@@ -54,7 +65,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     onDelete(message._id || '');
   };
 
-  // 撤回的消息 - H5 风格：居中显示，小圆角边框
+  // 撤回的消息 - H5 风格
   if (message.isRecalled) {
     return (
       <View style={styles.recalledContainer}>
@@ -90,7 +101,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               />
               {message.status === 'sending' && (
                 <View style={styles.imageLoading}>
-                  <Ionicons name="reload" size={24} color="#94a3b8" />
+                  <Ionicons name="reload-outline" size={20} color={Colors.slate400} />
                 </View>
               )}
             </View>
@@ -116,23 +127,24 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       <View style={[styles.container, isMe ? styles.containerMe : styles.containerOther]}>
         {/* 长按菜单 */}
         {showMenu && (
-          <Pressable
-            style={styles.menuOverlay}
-            onPress={() => setShowMenu(false)}
-          >
+          <>
+            <Pressable
+              style={styles.menuOverlay}
+              onPress={() => setShowMenu(false)}
+            />
             <View style={[styles.contextMenu, isMe ? styles.menuRight : styles.menuLeft]}>
               {isMe && message.status === 'sent' && (
                 <TouchableOpacity style={styles.menuItem} onPress={handleRecall}>
-                  <Ionicons name="undo" size={16} color="#475569" />
+                  <Ionicons name="undo-outline" size={14} color={Colors.slate700} />
                   <Text style={styles.menuItemText}>撤回</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.menuItem} onPress={handleDelete}>
-                <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                <Ionicons name="trash-outline" size={14} color={Colors.red500} />
                 <Text style={[styles.menuItemText, styles.menuItemTextDelete]}>删除</Text>
               </TouchableOpacity>
             </View>
-          </Pressable>
+          </>
         )}
 
         {/* 消息气泡 */}
@@ -147,7 +159,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               isMe ? styles.bubbleMe : styles.bubbleOther,
               message.messageType === 'image' && styles.bubbleImage,
               message.messageType === 'voice' && styles.bubbleVoice,
-              message.status === 'sending' && styles.bubbleSending,
             ]}
           >
             {renderContent()}
@@ -156,10 +167,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           {/* 时间戳 */}
           <View style={[styles.footer, isMe ? styles.footerMe : styles.footerOther]}>
             {message.status === 'sending' && isMe && (
-              <Ionicons name="reload" size={10} color="#94a3b8" style={styles.statusIcon} />
+              <Ionicons name="reload" size={8} color={Colors.slate400} style={styles.statusIcon} />
             )}
             {message.status === 'error' && isMe && (
-              <Ionicons name="alert-circle" size={10} color="#ef4444" style={styles.statusIcon} />
+              <Ionicons name="alert-circle" size={8} color={Colors.red500} style={styles.statusIcon} />
             )}
             <Text style={styles.time}>{formatTime()}</Text>
           </View>
@@ -176,19 +187,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   );
 };
 
-// 与 H5 版本匹配的颜色和样式
-const colors = {
-  primary: '#3b82f6',
-  slate50: '#f8fafc',
-  slate100: '#f1f5f9',
-  slate200: '#e2e8f0',
-  slate400: '#94a3b8',
-  slate800: '#1e293b',
-  white: '#ffffff',
-  red400: '#f87171',
-  red500: '#ef4444',
-};
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -202,23 +200,23 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   bubbleWrapper: {
-    maxWidth: '75%',
+    maxWidth: '80%',
   },
   bubble: {
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  // 接收方气泡：白色背景，左侧直角
+  // 接收方: 白色背景，左侧直角
   bubbleOther: {
-    backgroundColor: colors.white,
+    backgroundColor: Colors.white,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: colors.slate100,
+    borderColor: Colors.slate100,
   },
-  // 发送方气泡：蓝色背景，右侧直角
+  // 发送方: 蓝色背景，右侧直角
   bubbleMe: {
-    backgroundColor: colors.primary,
+    backgroundColor: Colors.primary,
     borderTopRightRadius: 4,
   },
   bubbleImage: {
@@ -234,22 +232,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
   },
-  bubbleSending: {
-    opacity: 0.7,
-  },
   messageText: {
     fontSize: 15,
-    color: colors.slate800,
+    color: Colors.slate800,
     lineHeight: 21,
   },
   messageTextMe: {
-    color: colors.white,
+    color: Colors.white,
   },
-  // 图片容器 - 匹配 H5 的 max-w-[240px]
+  // 图片容器 - H5: max-w-[240px]
   imageContainer: {
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: colors.slate50,
+    backgroundColor: Colors.slate50,
     minWidth: 150,
     minHeight: 150,
   },
@@ -267,12 +262,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // 时间戳样式
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 2,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   footerMe: {
     justifyContent: 'flex-end',
@@ -285,34 +279,35 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 10,
-    color: colors.slate400,
+    color: Colors.slate400,
   },
-  // 撤回消息样式 - 匹配 H5 的居中显示
+  // 撤回消息
   recalledContainer: {
     alignItems: 'center',
     marginVertical: 16,
   },
   recalledText: {
     fontSize: 12,
-    color: colors.slate400,
-    backgroundColor: colors.slate100,
+    color: Colors.slate400,
+    backgroundColor: Colors.slate100,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.slate200,
+    borderColor: Colors.slate200,
   },
-  // 长按菜单样式
+  // 长按菜单
   menuOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 999,
   },
   contextMenu: {
     position: 'absolute',
-    backgroundColor: colors.white,
+    backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 4,
     shadowColor: '#000',
@@ -320,8 +315,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
-    minWidth: 100,
-    top: -40,
+    minWidth: 120,
+    zIndex: 1000,
+    top: -45,
   },
   menuLeft: {
     left: 0,
@@ -332,17 +328,15 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    gap: 10,
   },
   menuItemText: {
     fontSize: 14,
-    color: colors.slate800,
+    color: Colors.slate800,
   },
   menuItemTextDelete: {
-    color: colors.red400,
+    color: Colors.red500,
   },
 });
-
-import { Platform } from 'react-native';
