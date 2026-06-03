@@ -5,18 +5,24 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Modal,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme, isDark, colors } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const [showLanguageModal, setShowLanguageModal] = React.useState(false);
 
   const handleLogout = () => {
-    Alert.alert('退出登录', '确定要退出登录吗？', [
-      { text: '取消', style: 'cancel' },
+    Alert.alert(t('modal.logout'), t('modal.logoutConfirm'), [
+      { text: t('action.cancel'), style: 'cancel' },
       {
-        text: '确定',
+        text: t('modal.confirm'),
         style: 'destructive',
         onPress: async () => {
           await logout();
@@ -25,55 +31,113 @@ export const ProfileScreen: React.FC = () => {
     ]);
   };
 
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       {/* 用户信息卡片 */}
-      <View style={styles.profileCard}>
-        <View style={styles.avatar}>
+      <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
+        <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
             {user?.username.charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={styles.username}>{user?.username}</Text>
-        <Text style={styles.userId}>ID: {user?.userId}</Text>
+        <Text style={[styles.username, { color: colors.text }]}>{user?.username}</Text>
+        <Text style={[styles.userId, { color: colors.textSecondary }]}>
+          ID: {user?.userId}
+        </Text>
       </View>
 
       {/* 功能列表 */}
-      <View style={styles.section}>
+      <View style={[styles.section, { backgroundColor: colors.card }]}>
+        <MenuItem
+          icon={isDark ? 'moon-outline' : 'sunny-outline'}
+          title={isDark ? t('modal.darkMode') : t('modal.lightMode')}
+          onPress={toggleTheme}
+          colors={colors}
+        />
+        <MenuItem
+          icon="language-outline"
+          title={t('modal.language')}
+          value={language === 'zh' ? '中文' : 'English'}
+          onPress={() => setShowLanguageModal(true)}
+          colors={colors}
+          showArrow
+        />
         <MenuItem
           icon="person-outline"
-          title="个人资料"
+          title={t('modal.myProfile')}
           onPress={() => {}}
+          colors={colors}
         />
         <MenuItem
           icon="notifications-outline"
-          title="通知设置"
+          title={t('modal.notifications') || '通知设置'}
           onPress={() => {}}
-        />
-        <MenuItem
-          icon="lock-closed-outline"
-          title="隐私设置"
-          onPress={() => {}}
+          colors={colors}
         />
       </View>
 
-      <View style={styles.section}>
+      <View style={[styles.section, { backgroundColor: colors.card }]}>
         <MenuItem
           icon="help-circle-outline"
-          title="帮助与反馈"
+          title={t('modal.help') || '帮助与反馈'}
           onPress={() => {}}
+          colors={colors}
         />
         <MenuItem
           icon="information-circle-outline"
-          title="关于"
+          title={t('modal.about') || '关于'}
           onPress={() => {}}
+          colors={colors}
         />
       </View>
 
       {/* 退出登录 */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>退出登录</Text>
+      <TouchableOpacity
+        style={[styles.logoutButton, { backgroundColor: colors.card }]}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutText}>{t('modal.logout')}</Text>
       </TouchableOpacity>
+
+      {/* 语言选择弹窗 */}
+      <Modal
+        visible={showLanguageModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowLanguageModal(false)}
+        >
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              {t('modal.languageSettings')}
+            </Text>
+            <LanguageOption
+              title="中文"
+              selected={language === 'zh'}
+              onPress={() => {
+                setLanguage('zh');
+                setShowLanguageModal(false);
+              }}
+              colors={colors}
+            />
+            <LanguageOption
+              title="English"
+              selected={language === 'en'}
+              onPress={() => {
+                setLanguage('en');
+                setShowLanguageModal(false);
+              }}
+              colors={colors}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
@@ -82,80 +146,141 @@ interface MenuItemProps {
   icon: string;
   title: string;
   onPress: () => void;
+  colors: any;
+  value?: string;
+  showArrow?: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onPress }) => {
+const MenuItem: React.FC<MenuItemProps> = ({
+  icon,
+  title,
+  onPress,
+  colors,
+  value,
+  showArrow = true,
+}) => {
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-      <Ionicons name={icon as any} size={24} color="#64748b" />
-      <Text style={styles.menuTitle}>{title}</Text>
-      <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+    <TouchableOpacity
+      style={[styles.menuItem, { borderBottomColor: colors.borderLight }]}
+      onPress={onPress}
+    >
+      <Ionicons name={icon as any} size={24} color={colors.textSecondary} />
+      <Text style={[styles.menuTitle, { color: colors.text }]}>{title}</Text>
+      {value && <Text style={[styles.menuValue, { color: colors.textLight }]}>{value}</Text>}
+      {showArrow && <Ionicons name="chevron-forward" size={20} color={colors.border} />}
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  profileCard: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingVertical: 32,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#3b82f6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: '700',
-  },
-  username: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 4,
-  },
-  userId: {
-    fontSize: 14,
-    color: '#64748b',
-  },
-  section: {
-    backgroundColor: '#fff',
-    marginBottom: 16,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  menuTitle: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1e293b',
-    marginLeft: 12,
-  },
-  logoutButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  logoutText: {
-    fontSize: 16,
-    color: '#ef4444',
-    fontWeight: '600',
-  },
-});
+interface LanguageOptionProps {
+  title: string;
+  selected: boolean;
+  onPress: () => void;
+  colors: any;
+}
+
+const LanguageOption: React.FC<LanguageOptionProps> = ({ title, selected, onPress, colors }) => {
+  return (
+    <TouchableOpacity
+      style={[styles.languageOption, selected && { backgroundColor: colors.primary }]}
+      onPress={onPress}
+    >
+      <Text style={[styles.languageOptionText, selected && { color: '#fff' }, !selected && { color: colors.text }]}>
+        {title}
+      </Text>
+      {selected && <Ionicons name="checkmark" size={20} color="#fff" />}
+    </TouchableOpacity>
+  );
+};
+
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    profileCard: {
+      alignItems: 'center',
+      paddingVertical: 32,
+      paddingHorizontal: 16,
+      marginBottom: 16,
+    },
+    avatar: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 16,
+    },
+    avatarText: {
+      color: '#fff',
+      fontSize: 32,
+      fontWeight: '700',
+    },
+    username: {
+      fontSize: 20,
+      fontWeight: '600',
+      marginBottom: 4,
+    },
+    userId: {
+      fontSize: 14,
+    },
+    section: {
+      marginBottom: 16,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 16,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+    },
+    menuTitle: {
+      flex: 1,
+      fontSize: 16,
+      marginLeft: 12,
+    },
+    menuValue: {
+      fontSize: 14,
+      marginRight: 8,
+    },
+    logoutButton: {
+      paddingVertical: 16,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    logoutText: {
+      fontSize: 16,
+      color: colors.error,
+      fontWeight: '600',
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      borderRadius: 16,
+      padding: 24,
+      width: '80%',
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 16,
+      textAlign: 'center',
+    },
+    languageOption: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+      borderRadius: 12,
+      marginBottom: 8,
+    },
+    languageOptionText: {
+      fontSize: 16,
+      fontWeight: '500',
+    },
+  });
