@@ -6,11 +6,23 @@ import {
   StyleSheet,
   Modal,
   Alert,
+  Text,
+  Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
-import { VoiceRecorder } from './VoiceRecorder';
+
+// 与 H5 版本匹配的颜色
+const Colors = {
+  primary: '#3b82f6',
+  slate50: '#f8fafc',
+  slate100: '#f1f5f9',
+  slate400: '#94a3b8',
+  slate800: '#1e293b',
+  white: '#ffffff',
+  red500: '#ef4444',
+};
 
 interface ChatInputProps {
   value: string;
@@ -128,7 +140,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           style={styles.iconButton}
           onPress={() => setShowActions(!showActions)}
         >
-          <Ionicons name="add-circle" size={28} color="#64748b" />
+          <Ionicons name="add-circle-outline" size={28} color={Colors.slate400} />
         </TouchableOpacity>
 
         <TextInput
@@ -136,13 +148,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           value={value}
           onChangeText={onChangeText}
           placeholder="输入消息..."
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor={Colors.slate400}
           multiline
         />
 
         {value.trim() ? (
           <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Ionicons name="send" size={20} color="#fff" />
+            <Ionicons name="send" size={18} color={Colors.white} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -151,9 +163,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onPressOut={stopRecording}
           >
             <Ionicons
-              name="mic"
-              size={24}
-              color={isRecording ? '#ef4444' : '#64748b'}
+              name="mic-outline"
+              size={22}
+              color={isRecording ? Colors.red500 : Colors.slate400}
             />
           </TouchableOpacity>
         )}
@@ -167,9 +179,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           animationType="slide"
           onRequestClose={() => setShowActions(false)}
         >
-          <TouchableOpacity
+          <Pressable
             style={styles.actionsOverlay}
-            activeOpacity={1}
             onPress={() => setShowActions(false)}
           >
             <View style={styles.actionsPanel}>
@@ -184,7 +195,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onPress={handleTakePhoto}
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </Modal>
       )}
 
@@ -209,7 +220,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, label, onPress }) => {
   return (
     <TouchableOpacity style={styles.actionItem} onPress={onPress}>
       <View style={styles.actionIcon}>
-        <Ionicons name={icon as any} size={28} color="#3b82f6" />
+        <Ionicons name={icon as any} size={28} color={Colors.primary} />
       </View>
       <Text style={styles.actionLabel}>{label}</Text>
     </TouchableOpacity>
@@ -222,9 +233,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
+    borderTopColor: Colors.slate100,
     gap: 8,
   },
   iconButton: {
@@ -235,19 +246,19 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: Colors.slate50,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    fontSize: 16,
+    fontSize: 15,
     maxHeight: 100,
-    color: '#1e293b',
+    color: Colors.slate800,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#3b82f6',
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    backgroundColor: Colors.primary,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -257,7 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   actionsPanel: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     flexDirection: 'row',
     paddingVertical: 24,
     paddingHorizontal: 32,
@@ -272,14 +283,14 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 56,
     height: 56,
-    backgroundColor: '#eff6ff',
+    backgroundColor: Colors.slate50,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionLabel: {
     fontSize: 14,
-    color: '#64748b',
+    color: Colors.slate800,
   },
   recordingIndicator: {
     position: 'absolute',
@@ -297,10 +308,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#ef4444',
+    backgroundColor: Colors.red500,
   },
   recordingText: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 14,
   },
 });
