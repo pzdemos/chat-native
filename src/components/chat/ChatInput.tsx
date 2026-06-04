@@ -156,15 +156,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </TouchableOpacity>
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            !enterKeySends && styles.inputMultiline
+          ]}
           value={value}
           onChangeText={onChangeText}
           placeholder="输入消息..."
           placeholderTextColor={Colors.slate400}
-          multiline={false}
+          multiline={!enterKeySends}
           returnKeyType={enterKeySends ? 'send' : 'done'}
           onSubmitEditing={handleSubmitEditing}
-          blurOnSubmit={false}
+          blurOnSubmit={enterKeySends ? false : true}
+          textAlignVertical={!enterKeySends ? 'top' : 'center'}
         />
 
         {value.trim() ? (
@@ -280,6 +284,11 @@ const styles = StyleSheet.create({
     height: 40,
     color: Colors.slate800,
     marginRight: 8,
+  },
+  inputMultiline: {
+    minHeight: 40,
+    maxHeight: 100,
+    height: 'auto',
   },
   sendButton: {
     width: 36,
