@@ -10,38 +10,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const SettingsScreen: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, enterKeySends, setEnterKeySends } = useAuth();
   const { theme, toggleTheme, isDark, colors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
-  const [enterKeySends, setEnterKeySendsState] = React.useState(true);
   const [showLanguageModal, setShowLanguageModal] = React.useState(false);
-
-  React.useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('enter_key_sends');
-      if (saved !== null) {
-        setEnterKeySendsState(saved === 'true');
-      }
-    } catch (error) {
-      console.error('加载设置失败:', error);
-    }
-  };
-
-  const setEnterKeySends = async (value: boolean) => {
-    setEnterKeySendsState(value);
-    try {
-      await AsyncStorage.setItem('enter_key_sends', value.toString());
-    } catch (error) {
-      console.error('保存设置失败:', error);
-    }
-  };
 
   const handleLogout = () => {
     logout();
