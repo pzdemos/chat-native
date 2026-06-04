@@ -183,7 +183,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         />
       </View>
 
-      <View style={[styles.bottomBar, { backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
+      <View style={[{ backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
         <ChatInput
           value={inputText}
           onChangeText={handleInputChange}
@@ -203,10 +203,6 @@ const styles = StyleSheet.create({
   },
   messagesWrapper: {
     flex: 1,
-  },
-  bottomBar: {
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
   },
   flatList: {
     flex: 1,
