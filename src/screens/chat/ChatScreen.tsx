@@ -164,22 +164,24 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [isMe, handleRecall, handleDelete]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.borderLight }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item) => item._id || item.timestamp}
-        contentContainerStyle={styles.messagesList}
-        keyboardShouldPersistTaps="handled"
-        ListFooterComponent={<View style={{ height: 8 }} />}
-        onContentSizeChange={() => {
-          if (messages.length > 0) {
-            flatListRef.current?.scrollToEnd({ animated: false });
-          }
-        }}
-        style={styles.flatList}
-      />
+    <View style={[styles.container, { backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
+      <View style={[styles.messagesWrapper, { backgroundColor: colors.borderLight }]}>
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item._id || item.timestamp}
+          contentContainerStyle={styles.messagesList}
+          keyboardShouldPersistTaps="handled"
+          ListFooterComponent={<View style={{ height: 8 }} />}
+          onContentSizeChange={() => {
+            if (messages.length > 0) {
+              flatListRef.current?.scrollToEnd({ animated: false });
+            }
+          }}
+          style={styles.flatList}
+        />
+      </View>
 
       <ChatInput
         value={inputText}
@@ -195,6 +197,9 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  messagesWrapper: {
     flex: 1,
   },
   flatList: {
