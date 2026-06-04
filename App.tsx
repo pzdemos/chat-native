@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ChatProvider } from './src/contexts/ChatContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
@@ -28,9 +28,9 @@ const AppNavigatorWithStatusBar = () => {
   const { isDark } = require('./src/contexts/ThemeContext').useTheme();
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <AppNavigator />
-    </>
+    </SafeAreaView>
   );
 };
