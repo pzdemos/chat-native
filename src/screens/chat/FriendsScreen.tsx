@@ -100,10 +100,10 @@ export const FriendsScreen: React.FC = () => {
       >
         <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
-            {item.username.charAt(0).toUpperCase()}
+            {(item.username || '?').charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={[styles.friendName, { color: colors.text }]}>{item.username}</Text>
+        <Text style={[styles.friendName, { color: colors.text }]}>{item.username || 'Unknown'}</Text>
       </TouchableOpacity>
     );
   }, [navigation, setActiveChat, colors]);
@@ -113,11 +113,11 @@ export const FriendsScreen: React.FC = () => {
       <View style={[styles.searchItem, { borderBottomColor: colors.borderLight }]}>
         <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
-            {item.username.charAt(0).toUpperCase()}
+            {(item.username || '?').charAt(0).toUpperCase()}
           </Text>
         </View>
         <View style={styles.searchInfo}>
-          <Text style={[styles.searchName, { color: colors.text }]}>{item.username}</Text>
+          <Text style={[styles.searchName, { color: colors.text }]}>{item.username || 'Unknown'}</Text>
           <Text style={[styles.searchId, { color: colors.textLight }]}>ID: {item.userId}</Text>
         </View>
         <TouchableOpacity
@@ -136,7 +136,7 @@ export const FriendsScreen: React.FC = () => {
         <View style={styles.requestLeft}>
           <View style={[styles.avatarSmall, { backgroundColor: colors.primary }]}>
             <Text style={styles.avatarTextSmall}>
-              {item.fromUsername.charAt(0).toUpperCase()}
+              {(item.fromUsername || '?').charAt(0).toUpperCase()}
             </Text>
           </View>
           <View>
