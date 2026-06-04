@@ -161,12 +161,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.menuItem, { borderBottomColor: colors.borderLight }]}
+      style={[menuItemStyles.menuItem, { borderBottomColor: colors.borderLight }]}
       onPress={onPress}
     >
       <Ionicons name={icon as any} size={24} color={colors.textSecondary} />
-      <Text style={[styles.menuTitle, { color: colors.text }]}>{title}</Text>
-      {value && <Text style={[styles.menuValue, { color: colors.textLight }]}>{value}</Text>}
+      <Text style={[menuItemStyles.menuTitle, { color: colors.text }]}>{title}</Text>
+      {value && <Text style={[menuItemStyles.menuValue, { color: colors.textLight }]}>{value}</Text>}
       {showArrow && <Ionicons name="chevron-forward" size={20} color={colors.border} />}
     </TouchableOpacity>
   );
@@ -182,10 +182,10 @@ interface LanguageOptionProps {
 const LanguageOption: React.FC<LanguageOptionProps> = ({ title, selected, onPress, colors }) => {
   return (
     <TouchableOpacity
-      style={[styles.languageOption, selected && { backgroundColor: colors.primary }]}
+      style={[languageOptionStyles.languageOption, selected && { backgroundColor: colors.primary }]}
       onPress={onPress}
     >
-      <Text style={[styles.languageOptionText, selected && { color: '#fff' }, !selected && { color: colors.text }]}>
+      <Text style={[languageOptionStyles.languageOptionText, selected && { color: '#fff' }, !selected && { color: colors.text }]}>
         {title}
       </Text>
       {selected && <Ionicons name="checkmark" size={20} color="#fff" />}
@@ -229,21 +229,6 @@ const createStyles = (colors: any) =>
     section: {
       marginBottom: 16,
     },
-    menuItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 16,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    menuTitle: {
-      flex: 1,
-      fontSize: 16,
-      marginLeft: 12,
-    },
-    menuValue: {
-      fontSize: 14,
-      marginRight: 8,
-    },
     logoutButton: {
       paddingVertical: 16,
       alignItems: 'center',
@@ -271,16 +256,37 @@ const createStyles = (colors: any) =>
       marginBottom: 16,
       textAlign: 'center',
     },
-    languageOption: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: 16,
-      borderRadius: 12,
-      marginBottom: 8,
-    },
-    languageOptionText: {
-      fontSize: 16,
-      fontWeight: '500',
-    },
   });
+
+const menuItemStyles = StyleSheet.create({
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  menuTitle: {
+    flex: 1,
+    fontSize: 16,
+    marginLeft: 12,
+  },
+  menuValue: {
+    fontSize: 14,
+    marginRight: 8,
+  },
+});
+
+const languageOptionStyles = StyleSheet.create({
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  languageOptionText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});
