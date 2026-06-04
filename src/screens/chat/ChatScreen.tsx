@@ -122,7 +122,11 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+    >
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -135,21 +139,17 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
             flatListRef.current?.scrollToEnd({ animated: false });
           }
         }}
+        style={styles.flatList}
       />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={0}
-      >
-        <ChatInput
-          value={inputText}
-          onChangeText={setInputText}
-          onSend={handleSend}
-          onImageSend={handleImageSend}
-          onVoiceSend={handleVoiceSend}
-        />
-      </KeyboardAvoidingView>
-    </View>
+      <ChatInput
+        value={inputText}
+        onChangeText={setInputText}
+        onSend={handleSend}
+        onImageSend={handleImageSend}
+        onVoiceSend={handleVoiceSend}
+      />
+    </KeyboardAvoidingView>
   );
 };
 
@@ -157,6 +157,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
+  },
+  flatList: {
+    flex: 1,
   },
   messagesList: {
     padding: 16,
