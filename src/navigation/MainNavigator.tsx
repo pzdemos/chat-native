@@ -1,7 +1,9 @@
 import React from 'react';
+import { Platform, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { ChatsScreen } from '../screens/chat/ChatsScreen';
 import { FriendsScreen } from '../screens/chat/FriendsScreen';
 import { SettingsScreen } from '../screens/chat/SettingsScreen';
@@ -15,7 +17,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Tab 导航器
 const TabNavigator: React.FC = () => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -24,13 +26,19 @@ const TabNavigator: React.FC = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
         tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopWidth: 1,
-          borderTopColor: colors.border,
-          height: 60,
-          paddingBottom: 8,
+          position: 'absolute',
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          height: 90,
+          paddingBottom: 30,
           paddingTop: 8,
         },
+        tabBarBackground: () =>
+          Platform.OS === 'ios' ? (
+            <BlurView tint={isDark ? 'dark' : 'light'} intensity={90} style={{ flex: 1 }} />
+          ) : (
+            <View style={{ flex: 1, backgroundColor: colors.card }} />
+          ),
       }}
     >
       <Tab.Screen

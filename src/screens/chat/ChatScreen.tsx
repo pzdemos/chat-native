@@ -158,7 +158,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.borderLight }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}
     >
       <FlatList
         ref={flatListRef}
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     padding: 16,
+    paddingBottom: 24,
     flexGrow: 1,
   },
   headerTitleContainer: {

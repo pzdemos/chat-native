@@ -256,7 +256,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
+    paddingBottom: 24,
     borderTopWidth: 1,
   },
   iconButton: {
