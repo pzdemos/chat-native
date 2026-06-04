@@ -35,7 +35,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    setupSocketListeners();
+    // 当 userId 存在时，设置监听器（socket 应该已经在 AuthContext 中连接）
+    if (userId) {
+      setupSocketListeners();
+    }
+
     return () => {
       socketService.off('receiveMessage');
       socketService.off('messageSent');
@@ -46,11 +50,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       socketService.off('userTyping');
       socketService.off('userStopTyping');
     };
-  }, []);
+  }, [userId]);
 
   const setupSocketListeners = () => {
+    console.log('设置 Socket 监听器，userId:', userId);
+
     // 接收消息
     socketService.on('receiveMessage', (data: Message) => {
+      console.log('收到消息:', data);
       setMessages(prev => [...prev, { ...data, status: 'sent' }]);
 
       // 更新好友列表的最后消息
@@ -63,6 +70,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 消息发送成功
     socketService.on('messageSent', (data: Message) => {
+      console.log('消息发送成功:', data);
       setMessages(prev => prev.map(msg =>
         msg._id === 'temp' ? { ...data, status: 'sent' } : msg
       ));
@@ -70,6 +78,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 消息撤回
     socketService.on('messageRecalled', (data: { messageId: string }) => {
+      console.log('消息撤回:', data);
       setMessages(prev => prev.map(msg =>
         msg._id === data.messageId
           ? { ...msg, isRecalled: true, content: '[消息已撤回]' }
@@ -79,11 +88,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 消息删除
     socketService.on('messageDeleted', (data: { messageId: string }) => {
+      console.log('消息删除:', data);
       setMessages(prev => prev.filter(msg => msg._id !== data.messageId));
     });
 
     // 消息已读
     socketService.on('messagesRead', (data: { byUserId: string }) => {
+      console.log('消息已读:', data);
       setMessages(prev => prev.map(msg =>
         msg.toUserId === data.byUserId ? { ...msg, isRead: true, deliveryStatus: 'read' } : msg
       ));
@@ -91,6 +102,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 消息送达
     socketService.on('messagesDelivered', (data: { messageIds: string[] }) => {
+      console.log('消息送达:', data);
       setMessages(prev => prev.map(msg =>
         data.messageIds.includes(msg._id || '')
           ? { ...msg, deliveryStatus: 'delivered' }
@@ -100,11 +112,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 正在输入
     socketService.on('userTyping', (data: { fromUserId: string }) => {
+      console.log('正在输入:', data);
       setTypingUsers(prev => [...prev, data.fromUserId]);
     });
 
     // 停止输入
     socketService.on('userStopTyping', (data: { fromUserId: string }) => {
+      console.log('停止输入:', data);
       setTypingUsers(prev => prev.filter(id => id !== data.fromUserId));
     });
   };
