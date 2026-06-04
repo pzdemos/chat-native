@@ -38,7 +38,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const { enterKeySends } = useAuth();
   const { colors } = useTheme();
   const [inputText, setInputText] = useState('');
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [bottomInset, setBottomInset] = useState(24);
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -76,10 +76,10 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     const show = Keyboard.addListener('keyboardWillShow', e => {
-      setKeyboardHeight(e.endCoordinates.height);
+      setBottomInset(e.endCoordinates.height);
       setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
     });
-    const hide = Keyboard.addListener('keyboardWillHide', () => setKeyboardHeight(0));
+    const hide = Keyboard.addListener('keyboardWillHide', () => setBottomInset(24));
     return () => { show.remove(); hide.remove(); };
   }, []);
 
@@ -164,7 +164,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [isMe, handleRecall, handleDelete]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.borderLight }, Platform.OS === 'ios' && { paddingBottom: keyboardHeight }]}>
+    <View style={[styles.container, { backgroundColor: colors.borderLight }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
       <FlatList
         ref={flatListRef}
         data={messages}
