@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
@@ -21,6 +21,7 @@ import { socketService } from '../../services/socket';
 
 export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const { friend } = route.params;
+  const navigation = useNavigation();
   const {
     userId,
     messages,
@@ -39,6 +40,21 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isTyping = typingUsers.includes(friend.userId);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={styles.headerTitleContainer}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{friend.username}</Text>
+          {isTyping && (
+            <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>正在输入...</Text>
+          )}
+        </View>
+      ),
+    });
+  }, [navigation, friend.username, isTyping, colors]);
 
   useEffect(() => {
     loadMessages(friend.userId);
@@ -150,7 +166,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         renderItem={renderMessage}
         keyExtractor={(item) => item._id || item.timestamp}
         contentContainerStyle={styles.messagesList}
-        ListFooterComponent={<TypingFooterWrapper typingUsers={typingUsers} friendUserId={friend.userId} colors={colors} />}
+        ListFooterComponent={<View style={{ height: 8 }} />}
         onContentSizeChange={() => {
           if (messages.length > 0) {
             flatListRef.current?.scrollToEnd({ animated: false });
@@ -171,23 +187,6 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   );
 };
 
-// Typing indicator footer component
-const TypingFooterWrapper: React.FC<{ typingUsers: string[]; friendUserId: string; colors: any }> = React.memo(({ typingUsers, friendUserId, colors }) => {
-  const isTyping = typingUsers.includes(friendUserId);
-  if (!isTyping) return null;
-
-  return (
-    <View style={styles.typingIndicator}>
-      <View style={styles.typingDots}>
-        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
-        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
-        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
-      </View>
-      <Text style={[styles.typingText, { color: colors.textLight }]}>正在输入...</Text>
-    </View>
-  );
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -199,26 +198,15 @@ const styles = StyleSheet.create({
     padding: 16,
     flexGrow: 1,
   },
-  typingIndicator: {
-    flexDirection: 'row',
+  headerTitleContainer: {
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
   },
-  typingDots: {
-    flexDirection: 'row',
-    marginRight: 8,
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
   },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 4,
-  },
-  dotAnimated: {
-    opacity: 0.7,
-  },
-  typingText: {
-    fontSize: 12,
+  headerSubtitle: {
+    fontSize: 11,
+    marginTop: 1,
   },
 });
