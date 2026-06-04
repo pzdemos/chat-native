@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -28,23 +28,6 @@ export const FriendsScreen: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(false);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      headerTitle: '',
-      headerStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => setShowAddModal(true)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={{ marginRight: 16 }}
-        >
-          <Ionicons name="person-add-outline" size={24} color={colors.primary} />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, colors, isDark]);
 
   useEffect(() => {
     loadFriends();
@@ -181,6 +164,18 @@ export const FriendsScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
+      {/* 顶部栏 */}
+      <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.topBarTitle, { color: colors.text }]}>好友</Text>
+        <TouchableOpacity
+          onPress={() => setShowAddModal(true)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={styles.addTopButton}
+        >
+          <Ionicons name="person-add-outline" size={22} color={colors.primary} />
+        </TouchableOpacity>
+      </View>
+
       {/* 好友请求列表 */}
       {requests.length > 0 && (
         <View style={[styles.requestsSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
@@ -272,6 +267,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  topBarTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  addTopButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   requestsSection: {
     backgroundColor: '#fff',
