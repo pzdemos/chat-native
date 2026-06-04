@@ -11,6 +11,7 @@ import {
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRoute } from '@react-navigation/native';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
 import { MessageBubble } from '../../components/chat/MessageBubble';
@@ -34,6 +35,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   } = useChat();
 
   const { enterKeySends } = useAuth();
+  const { colors } = useTheme();
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -138,7 +140,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.borderLight }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
@@ -148,7 +150,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         renderItem={renderMessage}
         keyExtractor={(item) => item._id || item.timestamp}
         contentContainerStyle={styles.messagesList}
-        ListFooterComponent={<TypingFooterWrapper typingUsers={typingUsers} friendUserId={friend.userId} />}
+        ListFooterComponent={<TypingFooterWrapper typingUsers={typingUsers} friendUserId={friend.userId} colors={colors} />}
         onContentSizeChange={() => {
           if (messages.length > 0) {
             flatListRef.current?.scrollToEnd({ animated: false });
@@ -170,18 +172,18 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
 };
 
 // Typing indicator footer component
-const TypingFooterWrapper: React.FC<{ typingUsers: string[]; friendUserId: string }> = React.memo(({ typingUsers, friendUserId }) => {
+const TypingFooterWrapper: React.FC<{ typingUsers: string[]; friendUserId: string; colors: any }> = React.memo(({ typingUsers, friendUserId, colors }) => {
   const isTyping = typingUsers.includes(friendUserId);
   if (!isTyping) return null;
 
   return (
     <View style={styles.typingIndicator}>
       <View style={styles.typingDots}>
-        <View style={[styles.dot, styles.dotAnimated]} />
-        <View style={[styles.dot, styles.dotAnimated]} />
-        <View style={[styles.dot, styles.dotAnimated]} />
+        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
+        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
+        <View style={[styles.dot, styles.dotAnimated, { backgroundColor: colors.textLight }]} />
       </View>
-      <Text style={styles.typingText}>正在输入...</Text>
+      <Text style={[styles.typingText, { color: colors.textLight }]}>正在输入...</Text>
     </View>
   );
 });
@@ -189,7 +191,6 @@ const TypingFooterWrapper: React.FC<{ typingUsers: string[]; friendUserId: strin
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
   },
   flatList: {
     flex: 1,
@@ -212,7 +213,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#94a3b8',
     marginRight: 4,
   },
   dotAnimated: {
@@ -220,6 +220,5 @@ const styles = StyleSheet.create({
   },
   typingText: {
     fontSize: 12,
-    color: '#94a3b8',
   },
 });
