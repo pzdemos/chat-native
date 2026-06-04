@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ export const FriendsScreen: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(false);
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   useEffect(() => {
     loadFriends();
@@ -240,7 +241,7 @@ export const FriendsScreen: React.FC = () => {
                 {loading ? (
                   <Text style={styles.searchButtonText}>...</Text>
                 ) : (
-                  <Ionicons name="search" size={20} color="#fff" />
+                  <Ionicons name="search" size={20} color={colors.white} />
                 )}
               </TouchableOpacity>
             </View>
@@ -263,10 +264,15 @@ export const FriendsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+type FriendsColors = {
+  primary: string; text: string; textSecondary: string; textLight: string;
+  card: string; border: string; borderLight: string; white: string;
+};
+
+const createStyles = (c: FriendsColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: c.borderLight,
   },
   topBar: {
     flexDirection: 'row',
@@ -288,18 +294,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   requestsSection: {
-    backgroundColor: '#fff',
+    backgroundColor: c.card,
     borderBottomWidth: 8,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: c.borderLight,
   },
   friendsSection: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: c.card,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748b',
+    color: c.textSecondary,
     padding: 16,
     paddingBottom: 8,
   },
@@ -308,19 +314,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: c.borderLight,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#3AA882',
+    backgroundColor: c.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarText: {
-    color: '#fff',
+    color: c.white,
     fontSize: 18,
     fontWeight: '600',
   },
@@ -328,19 +334,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#3AA882',
+    backgroundColor: c.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarTextSmall: {
-    color: '#fff',
+    color: c.white,
     fontSize: 16,
     fontWeight: '600',
   },
   friendName: {
     fontSize: 16,
-    color: '#1e293b',
+    color: c.text,
   },
   requestItem: {
     flexDirection: 'row',
@@ -348,7 +354,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: c.borderLight,
   },
   requestLeft: {
     flexDirection: 'row',
@@ -358,35 +364,35 @@ const styles = StyleSheet.create({
   requestName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1e293b',
+    color: c.text,
   },
   requestText: {
     fontSize: 14,
-    color: '#64748b',
+    color: c.textSecondary,
     marginTop: 2,
   },
   requestActions: {
     flexDirection: 'row',
   },
   acceptButton: {
-    backgroundColor: '#3AA882',
+    backgroundColor: c.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
   },
   acceptButtonText: {
-    color: '#fff',
+    color: c.white,
     fontSize: 14,
     fontWeight: '600',
   },
   rejectButton: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: c.borderLight,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
   },
   rejectButtonText: {
-    color: '#64748b',
+    color: c.textSecondary,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -396,7 +402,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#94a3b8',
+    color: c.textLight,
   },
   modalOverlay: {
     flex: 1,
@@ -404,7 +410,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: c.card,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -419,7 +425,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1e293b',
+    color: c.text,
   },
   searchBar: {
     flexDirection: 'row',
@@ -427,7 +433,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: c.borderLight,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -436,13 +442,13 @@ const styles = StyleSheet.create({
   searchButton: {
     width: 48,
     height: 48,
-    backgroundColor: '#3AA882',
+    backgroundColor: c.primary,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchButtonText: {
-    color: '#fff',
+    color: c.white,
   },
   searchResults: {
     flex: 1,
@@ -452,7 +458,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: c.borderLight,
   },
   searchInfo: {
     flex: 1,
@@ -461,24 +467,24 @@ const styles = StyleSheet.create({
   searchName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1e293b',
+    color: c.text,
   },
   searchId: {
     fontSize: 14,
-    color: '#94a3b8',
+    color: c.textLight,
     marginTop: 2,
   },
   addButton: {
     width: 40,
     height: 40,
-    backgroundColor: '#eff6ff',
+    backgroundColor: c.borderLight,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   noResults: {
     textAlign: 'center',
-    color: '#94a3b8',
+    color: c.textLight,
     marginTop: 40,
   },
 });
