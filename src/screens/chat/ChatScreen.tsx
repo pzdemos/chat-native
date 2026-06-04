@@ -74,13 +74,20 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [friend.userId]);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-    const show = Keyboard.addListener('keyboardWillShow', e => {
-      setBottomInset(e.endCoordinates.height);
-      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
-    });
-    const hide = Keyboard.addListener('keyboardWillHide', () => setBottomInset(24));
-    return () => { show.remove(); hide.remove(); };
+    if (Platform.OS === 'ios') {
+      const show = Keyboard.addListener('keyboardWillShow', e => {
+        setBottomInset(e.endCoordinates.height);
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
+      });
+      const hide = Keyboard.addListener('keyboardWillHide', () => setBottomInset(24));
+      return () => { show.remove(); hide.remove(); };
+    } else {
+      // Android: keyboardDidShow 用于确保消息列表滚动到底部
+      const show = Keyboard.addListener('keyboardDidShow', () => {
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 100);
+      });
+      return () => show.remove();
+    }
   }, []);
 
   const handleSend = () => {
