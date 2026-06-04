@@ -22,7 +22,7 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* 用户信息卡片 */}
       <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
         <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
@@ -225,7 +225,6 @@ const languageOptionStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   profileCard: {
     alignItems: 'center',
@@ -274,7 +273,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     marginBottom: 32,
-    backgroundColor: '#ffffff',
   },
   logoutText: {
     fontSize: 16,
