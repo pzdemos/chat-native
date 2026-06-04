@@ -7,6 +7,7 @@ import {
   Keyboard,
   Platform,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -170,8 +171,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     );
   }, [isMe, handleRecall, handleDelete]);
 
-  return (
-    <View style={styles.container}>
+  const content = (
+    <>
       <View style={[styles.messagesWrapper, { backgroundColor: colors.borderLight }]}>
         <FlatList
           ref={flatListRef}
@@ -200,8 +201,22 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
           enterKeySends={enterKeySends}
         />
       </View>
-    </View>
+    </>
   );
+
+  if (Platform.OS === 'android') {
+    return (
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        keyboardVerticalOffset={0}
+      >
+        {content}
+      </KeyboardAvoidingView>
+    );
+  }
+
+  return <View style={styles.container}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
