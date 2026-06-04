@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     padding: 16,
-    paddingBottom: 24,
     flexGrow: 1,
   },
   headerTitleContainer: {

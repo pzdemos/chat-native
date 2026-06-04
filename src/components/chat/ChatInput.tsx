@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    paddingBottom: 24,
     borderTopWidth: 1,
   },
   iconButton: {
