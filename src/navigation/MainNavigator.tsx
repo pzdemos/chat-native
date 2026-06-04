@@ -18,14 +18,14 @@ const TabNavigator: React.FC = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#3b82f6',
+        tabBarActiveTintColor: '#22c55e',
         tabBarInactiveTintColor: '#94a3b8',
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
           borderTopColor: '#e2e8f0',
-          height: 60,
-          paddingBottom: 8,
+          height: 50,
+          paddingBottom: 0,
           paddingTop: 8,
         },
       }}
@@ -81,7 +81,7 @@ export const MainNavigator: React.FC = () => {
           title: (route.params?.friend as Friend)?.username || '聊天',
           headerStyle: { backgroundColor: '#fff' },
           headerTitleStyle: { fontSize: 18, fontWeight: '600' },
-          headerTintColor: '#3b82f6',
+          headerTintColor: '#22c55e',
         })}
       />
     </Stack.Navigator>
