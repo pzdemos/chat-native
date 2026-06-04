@@ -7,7 +7,6 @@ import {
   Keyboard,
   Platform,
   Alert,
-  KeyboardAvoidingView,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -75,20 +74,16 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [friend.userId]);
 
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      const show = Keyboard.addListener('keyboardWillShow', e => {
-        setBottomInset(e.endCoordinates.height);
-        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
-      });
-      const hide = Keyboard.addListener('keyboardWillHide', () => setBottomInset(24));
-      return () => { show.remove(); hide.remove(); };
-    } else {
-      // Android: keyboardDidShow 用于确保消息列表滚动到底部
-      const show = Keyboard.addListener('keyboardDidShow', () => {
-        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 100);
-      });
-      return () => show.remove();
-    }
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const show = Keyboard.addListener(showEvent, e => {
+      const keyboardHeight = Platform.OS === 'ios' ? e.endCoordinates.height : e.endCoordinates?.height || 0;
+      setBottomInset(keyboardHeight);
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
+    });
+    const hide = Keyboard.addListener(hideEvent, () => setBottomInset(24));
+    return () => { show.remove(); hide.remove(); };
   }, []);
 
   const handleSend = () => {
@@ -171,8 +166,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     );
   }, [isMe, handleRecall, handleDelete]);
 
-  const content = (
-    <>
+  return (
+    <View style={styles.container}>
       <View style={[styles.messagesWrapper, { backgroundColor: colors.borderLight }]}>
         <FlatList
           ref={flatListRef}
@@ -191,7 +186,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         />
       </View>
 
-      <View style={[{ backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
+      <View style={[{ backgroundColor: colors.card, paddingBottom: bottomInset }]}>
         <ChatInput
           value={inputText}
           onChangeText={handleInputChange}
@@ -201,22 +196,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
           enterKeySends={enterKeySends}
         />
       </View>
-    </>
+    </View>
   );
-
-  if (Platform.OS === 'android') {
-    return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding"
-        keyboardVerticalOffset={0}
-      >
-        {content}
-      </KeyboardAvoidingView>
-    );
-  }
-
-  return <View style={styles.container}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
