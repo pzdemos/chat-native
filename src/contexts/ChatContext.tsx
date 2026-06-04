@@ -110,9 +110,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loadFriends = async () => {
+    if (!userId) return;
     setIsLoadingFriends(true);
     try {
-      const data = await api.getFriends();
+      const data = await api.getFriends(userId);
       setFriends(data);
     } catch (error) {
       console.error('加载好友列表失败:', error);
@@ -210,7 +211,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setMessages(prev => [...prev, tempMessage]);
 
     try {
-      const result = await api.uploadAudio(uri, duration);
+      const result = await api.uploadVoice(uri, duration);
 
       socketService.sendMessage({
         fromUserId: userId,

@@ -105,7 +105,7 @@ class API {
   }
 
   // 认证相关
-  async login(username: string, password: string): Promise<{ userId: string; username: string }> {
+  async login(username: string, password: string): Promise<{ userId: string; username: string; avatar?: string }> {
     return this.request('users/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
@@ -113,40 +113,40 @@ class API {
   }
 
   async register(username: string, password: string): Promise<{ userId: string; username: string }> {
-    return this.request('users/register', {
+    return this.request('users', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, age: 18 }),
     });
   }
 
   // 好友相关
   async searchUsers(query: string): Promise<User[]> {
-    return this.request(`friends/search?q=${encodeURIComponent(query)}`);
+    return this.request(`users/search/${encodeURIComponent(query)}`);
   }
 
-  async sendFriendRequest(toUserId: string): Promise<FriendRequest> {
+  async sendFriendRequest(fromUserId: string, toUserId: string): Promise<FriendRequest> {
     return this.request('friends/request', {
       method: 'POST',
-      body: JSON.stringify({ toUserId }),
+      body: JSON.stringify({ fromUserId, toUserId }),
     });
   }
 
-  async getFriendRequests(): Promise<FriendRequest[]> {
-    return this.request('friends/requests');
+  async getFriendRequests(userId: string): Promise<FriendRequest[]> {
+    return this.request(`friends/requests/${userId}`);
   }
 
   async respondToRequest(
     requestId: string,
-    accept: boolean
+    action: 'accept' | 'reject'
   ): Promise<{ success: boolean }> {
     return this.request('friends/respond', {
       method: 'POST',
-      body: JSON.stringify({ requestId, accept }),
+      body: JSON.stringify({ requestId, action }),
     });
   }
 
-  async getFriends(): Promise<Friend[]> {
-    return this.request('friends');
+  async getFriends(userId: string): Promise<Friend[]> {
+    return this.request(`friends/list/${userId}`);
   }
 
   async deleteFriend(friendUserId: string): Promise<{ success: boolean }> {
@@ -209,20 +209,44 @@ class API {
     return data;
   }
 
-  async uploadAudio(uri: string, duration: number): Promise<{
+  async uploadVoice(uri: string, duration: number): Promise<{
     voiceUrl: string;
     voiceSize: number;
   }> {
     const formData = new FormData();
-    formData.append('audio', {
+    formData.append('voice', {
       uri: uri,
       type: 'audio/wav',
       name: 'voice.wav',
     } as any);
     formData.append('duration', duration.toString());
 
-    const response = await fetch(`${API_BASE_URL}upload/audio`, {
+    const response = await fetch(`${API_BASE_URL}upload/voice`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        ...(this.userId ? { 'x-user-id': this.userId } : {}),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || '上传失败');
+    }
+    return data;
+  }
+
+  async updateAvatar(uri: string, userId: string): Promise<{ avatar: string }> {
+    const formData = new FormData();
+    formData.append('avatar', {
+      uri: uri,
+      type: 'image/jpeg',
+      name: 'avatar.jpg',
+    } as any);
+
+    const response = await fetch(`${API_BASE_URL}users/${userId}/avatar`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'multipart/form-data',
         ...(this.userId ? { 'x-user-id': this.userId } : {}),

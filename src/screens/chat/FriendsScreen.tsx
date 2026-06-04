@@ -31,7 +31,7 @@ export const FriendsScreen: React.FC = () => {
 
   const loadRequests = async () => {
     try {
-      const data = await api.getFriendRequests();
+      const data = await api.getFriendRequests(user?.userId || '');
       setRequests(data.filter((r: FriendRequest) => r.status === 'pending'));
     } catch (error) {
       console.error('加载好友请求失败:', error);
@@ -63,7 +63,7 @@ export const FriendsScreen: React.FC = () => {
 
   const handleSendRequest = async (toUserId: string, toUsername: string) => {
     try {
-      await api.sendFriendRequest(toUserId);
+      await api.sendFriendRequest(user?.userId || '', toUserId);
       Alert.alert('成功', `已向 ${toUsername} 发送好友请求`);
       setSearchResults([]);
       setSearchQuery('');
@@ -74,7 +74,8 @@ export const FriendsScreen: React.FC = () => {
 
   const handleRespondRequest = async (requestId: string, accept: boolean) => {
     try {
-      await api.respondToRequest(requestId, accept);
+      const action = accept ? 'accept' : 'reject';
+      await api.respondToRequest(requestId, action);
       await loadRequests();
       await loadFriends();
       Alert.alert('成功', accept ? '已添加好友' : '已拒绝请求');
