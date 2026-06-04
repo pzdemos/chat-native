@@ -24,8 +24,8 @@ const TabNavigator: React.FC = () => {
           backgroundColor: '#ffffff',
           borderTopWidth: 1,
           borderTopColor: '#e2e8f0',
-          height: 50,
-          paddingBottom: 0,
+          height: 60,
+          paddingBottom: 8,
           paddingTop: 8,
         },
       }}
