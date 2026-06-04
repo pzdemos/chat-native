@@ -11,6 +11,21 @@ const SOCKET_DOMAIN = __DEV__
 
 export const API_BASE_URL = `${API_DOMAIN}/ms/`;
 export const SOCKET_URL = `https://${SOCKET_DOMAIN}`;
+export const BASE_DOMAIN = API_DOMAIN.replace('https://', '');
+
+// Normalize image URL - match H5 implementation
+export const normalizeImageUrl = (url?: string): string => {
+  if (!url) return '';
+  if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('file:')) return url;
+
+  const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+
+  if (cleanUrl.startsWith('ms/')) {
+    return `https://${BASE_DOMAIN}/${cleanUrl}`;
+  }
+
+  return `${API_BASE_URL}${cleanUrl}`;
+};
 
 // 存储键
 const STORAGE_KEYS = {

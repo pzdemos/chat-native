@@ -332,7 +332,6 @@ const styles = StyleSheet.create({
   },
   requestActions: {
     flexDirection: 'row',
-    gap: 8,
   },
   acceptButton: {
     backgroundColor: '#3b82f6',
@@ -405,7 +404,6 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     flexDirection: 'row',
-    gap: 8,
     marginBottom: 16,
   },
   searchInput: {

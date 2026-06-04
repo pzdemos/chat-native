@@ -123,8 +123,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       const uri = recording.getURI();
       const status = await recording.getStatusAsync();
 
-      if (uri && status.durationMillis) {
+      // 至少 0.5 秒才发送
+      if (uri && status.durationMillis && status.durationMillis > 500) {
         await onVoiceSend(uri, Math.round(status.durationMillis / 1000));
+      } else if (status.durationMillis && status.durationMillis <= 500) {
+        console.warn('录音时间太短');
       }
 
       setRecording(null);
@@ -139,6 +142,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => setShowActions(!showActions)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <Ionicons name="add-circle-outline" size={28} color={Colors.slate400} />
         </TouchableOpacity>
@@ -149,11 +153,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onChangeText={onChangeText}
           placeholder="输入消息..."
           placeholderTextColor={Colors.slate400}
-          multiline
+          multiline={false}
         />
 
         {value.trim() ? (
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <TouchableOpacity
+            style={styles.sendButton}
+            onPress={handleSend}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
             <Ionicons name="send" size={18} color={Colors.white} />
           </TouchableOpacity>
         ) : (
@@ -161,6 +169,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             style={styles.iconButton}
             onPressIn={startRecording}
             onPressOut={stopRecording}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons
               name="mic-outline"
@@ -172,18 +181,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       </View>
 
       {/* 功能面板 */}
-      {showActions && (
+      {showActions ? (
         <Modal
           visible={showActions}
           transparent={true}
           animationType="slide"
           onRequestClose={() => setShowActions(false)}
         >
-          <Pressable
+          <TouchableOpacity
             style={styles.actionsOverlay}
+            activeOpacity={1}
             onPress={() => setShowActions(false)}
           >
-            <View style={styles.actionsPanel}>
+            <TouchableOpacity
+              style={styles.actionsPanel}
+              activeOpacity={1}
+              onPress={(e) => e.stopPropagation()}
+            >
               <ActionItem
                 icon="image-outline"
                 label="图片"
@@ -194,18 +208,18 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 label="拍照"
                 onPress={handleTakePhoto}
               />
-            </View>
-          </Pressable>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </Modal>
-      )}
+      ) : null}
 
       {/* 录音指示器 */}
-      {isRecording && (
+      {isRecording ? (
         <View style={styles.recordingIndicator}>
           <View style={styles.recordingDot} />
           <Text style={styles.recordingText}>录音中...</Text>
         </View>
-      )}
+      ) : null}
     </>
   );
 };
@@ -230,29 +244,31 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, label, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     backgroundColor: Colors.white,
     borderTopWidth: 1,
     borderTopColor: Colors.slate100,
-    gap: 8,
   },
   iconButton: {
     width: 40,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 0,
+    marginRight: 8,
   },
   input: {
     flex: 1,
     backgroundColor: Colors.slate50,
     borderRadius: 20,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     fontSize: 15,
-    maxHeight: 100,
+    height: 40,
     color: Colors.slate800,
+    marginRight: 8,
   },
   sendButton: {
     width: 36,
@@ -272,13 +288,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 24,
     paddingHorizontal: 32,
-    gap: 32,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   actionItem: {
     alignItems: 'center',
-    gap: 8,
+    marginHorizontal: 16,
   },
   actionIcon: {
     width: 56,
@@ -287,6 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 8,
   },
   actionLabel: {
     fontSize: 14,
@@ -294,7 +310,7 @@ const styles = StyleSheet.create({
   },
   recordingIndicator: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 70,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
@@ -302,13 +318,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    gap: 8,
   },
   recordingDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: Colors.red500,
+    marginRight: 8,
   },
   recordingText: {
     color: Colors.white,

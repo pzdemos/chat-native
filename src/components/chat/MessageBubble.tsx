@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
 import { ImageViewer } from './ImageViewer';
 import { VoicePlayer } from './VoicePlayer';
+import { normalizeImageUrl } from '../../services/api';
 
 // 与 H5 版本匹配的颜色
 const Colors = {
@@ -91,11 +92,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         );
 
       case 'image':
+        const displayImageUrl = normalizeImageUrl(
+          message.fallbackUrl || message.imageUrl || message.webpUrl || ''
+        );
         return (
           <Pressable onPress={() => setImageViewerVisible(true)}>
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: message.imageUrl }}
+                source={{ uri: displayImageUrl }}
                 style={styles.image}
                 resizeMode="cover"
               />
@@ -180,7 +184,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       {/* 图片预览 */}
       <ImageViewer
         visible={imageViewerVisible}
-        uri={message.imageUrl || ''}
+        uri={normalizeImageUrl(message.fallbackUrl || message.imageUrl || message.webpUrl || '')}
         onClose={() => setImageViewerVisible(false)}
       />
     </>
@@ -330,11 +334,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 14,
-    gap: 10,
   },
   menuItemText: {
     fontSize: 14,
     color: Colors.slate800,
+    marginLeft: 10,
   },
   menuItemTextDelete: {
     color: Colors.red500,

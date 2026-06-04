@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import { normalizeImageUrl } from '../../services/api';
 
 interface VoicePlayerProps {
   uri: string;
@@ -59,9 +60,11 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
       try {
         setIsLoading(true);
 
+        const normalizedUri = normalizeImageUrl(uri);
+
         if (!sound) {
           const { sound: newSound } = await Audio.Sound.createAsync(
-            { uri },
+            { uri: normalizedUri },
             { shouldPlay: true },
             onPlaybackStatusUpdate
           );
@@ -186,7 +189,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    gap: 12,
     minWidth: 100,
   },
   containerMe: {
@@ -201,6 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   playButtonMe: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -214,19 +217,21 @@ const styles = StyleSheet.create({
   wavesContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
     flex: 1,
     height: 16,
+    marginRight: 2,
   },
   wave: {
     width: 3,
     height: 16,
     borderRadius: 2,
+    marginRight: 2,
   },
   duration: {
     fontSize: 10,
     color: colors.slate400,
     fontWeight: '500',
+    marginLeft: 12,
   },
   durationMe: {
     color: colors.green50,

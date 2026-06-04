@@ -122,11 +122,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -141,14 +137,19 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         }}
       />
 
-      <ChatInput
-        value={inputText}
-        onChangeText={setInputText}
-        onSend={handleSend}
-        onImageSend={handleImageSend}
-        onVoiceSend={handleVoiceSend}
-      />
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
+        <ChatInput
+          value={inputText}
+          onChangeText={setInputText}
+          onSend={handleSend}
+          onImageSend={handleImageSend}
+          onVoiceSend={handleVoiceSend}
+        />
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
