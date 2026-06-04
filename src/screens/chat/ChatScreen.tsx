@@ -9,12 +9,14 @@ import {
   Alert,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
 import { MessageBubble } from '../../components/chat/MessageBubble';
 import { ChatInput } from '../../components/chat/ChatInput';
 import type { ChatScreenProps } from '../../navigation/MainNavigator';
+import { socketService } from '../../services/socket';
 
 export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const { friend } = route.params;
@@ -31,8 +33,10 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     typingUsers,
   } = useChat();
 
+  const { enterKeySends } = useAuth();
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     loadMessages(friend.userId);
@@ -57,6 +61,33 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
       setInputText('');
     }
   };
+
+  const handleInputChange = (text: string) => {
+    setInputText(text);
+
+    // 发送正在输入状态
+    if (userId && text.length > 0) {
+      socketService.emitTyping({ fromUserId: userId, toUserId: friend.userId });
+
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        socketService.stopTyping({ fromUserId: userId, toUserId: friend.userId });
+      }, 2000);
+    } else if (userId && text.length === 0) {
+      socketService.stopTyping({ fromUserId: userId, toUserId: friend.userId });
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleImageSend = async (uri: string) => {
     const fileName = `image_${Date.now()}.jpg`;
@@ -144,10 +175,12 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
 
       <ChatInput
         value={inputText}
-        onChangeText={setInputText}
+        onChangeText={handleInputChange}
         onSend={handleSend}
         onImageSend={handleImageSend}
         onVoiceSend={handleVoiceSend}
+        enterKeySends={enterKeySends}
+        friendUserId={friend.userId}
       />
     </KeyboardAvoidingView>
   );

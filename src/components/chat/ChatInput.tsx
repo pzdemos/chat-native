@@ -30,6 +30,8 @@ interface ChatInputProps {
   onSend: () => void;
   onImageSend: (uri: string) => Promise<void>;
   onVoiceSend: (uri: string, duration: number) => Promise<void>;
+  enterKeySends?: boolean;
+  friendUserId?: string;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -38,6 +40,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   onImageSend,
   onVoiceSend,
+  enterKeySends = true,
+  friendUserId,
 }) => {
   const [showActions, setShowActions] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -45,6 +49,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleSend = () => {
     if (value.trim()) {
+      onSend();
+    }
+  };
+
+  const handleSubmitEditing = () => {
+    if (enterKeySends && value.trim()) {
       onSend();
     }
   };
@@ -154,6 +164,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           placeholder="输入消息..."
           placeholderTextColor={Colors.slate400}
           multiline={false}
+          returnKeyType={enterKeySends ? 'send' : 'done'}
+          onSubmitEditing={handleSubmitEditing}
         />
 
         {value.trim() ? (
