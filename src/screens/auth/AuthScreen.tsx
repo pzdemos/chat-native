@@ -11,9 +11,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const AuthScreen: React.FC = () => {
   const { login, register } = useAuth();
+  const { colors } = useTheme();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -50,7 +52,7 @@ export const AuthScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.borderLight }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -58,34 +60,36 @@ export const AuthScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Chat</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: colors.primary }]}>Chat</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {isLogin ? '登录以继续' : '创建新账户'}
           </Text>
         </View>
 
         <View style={styles.form}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             placeholder="用户名"
+            placeholderTextColor={colors.textSecondary}
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
           />
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             placeholder="密码"
+            placeholderTextColor={colors.textSecondary}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             autoCapitalize="none"
           />
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+          {error ? <Text style={[styles.error, { color: colors.error }]}>{error}</Text> : null}
 
           <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
+            style={[styles.button, { backgroundColor: colors.primary }, loading && styles.buttonDisabled]}
             onPress={handleSubmit}
             disabled={loading}
           >
@@ -107,7 +111,7 @@ export const AuthScreen: React.FC = () => {
               setPassword('');
             }}
           >
-            <Text style={styles.switchText}>
+            <Text style={[styles.switchText, { color: colors.textSecondary }]}>
               {isLogin ? '没有账户？立即注册' : '已有账户？立即登录'}
             </Text>
           </TouchableOpacity>
@@ -120,7 +124,6 @@ export const AuthScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
   },
   scrollContent: {
     flexGrow: 1,
@@ -134,27 +137,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#22c55e',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#64748b',
   },
   form: {
     width: '100%',
   },
   input: {
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#e2e8f0',
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#22c55e',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -169,7 +167,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   error: {
-    color: '#ef4444',
     fontSize: 14,
     marginBottom: 16,
   },
@@ -178,7 +175,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   switchText: {
-    color: '#22c55e',
     fontSize: 14,
   },
 });
