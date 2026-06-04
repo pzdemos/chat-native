@@ -14,13 +14,14 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { Message } from '../../types';
 import { ImageViewer } from './ImageViewer';
 import { VoicePlayer } from './VoicePlayer';
-import { normalizeImageUrl } from '../../services/api';
+import { normalizeImageUrlWithAuth } from '../../services/api';
 
 interface MessageBubbleProps {
   message: Message;
   isMe: boolean;
   onRecall: (messageId: string) => void;
   onDelete: (messageId: string) => void;
+  userId?: string; // 当前用户ID，用于图片URL认证
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -28,6 +29,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isMe,
   onRecall,
   onDelete,
+  userId,
 }) => {
   const { colors } = useTheme();
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
@@ -80,8 +82,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         );
 
       case 'image':
-        const displayImageUrl = normalizeImageUrl(
-          message.fallbackUrl || message.imageUrl || message.webpUrl || ''
+        const displayImageUrl = normalizeImageUrlWithAuth(
+          message.fallbackUrl || message.imageUrl || message.webpUrl || '',
+          userId
         );
         return (
           <Pressable onPress={() => setImageViewerVisible(true)}>
@@ -172,7 +175,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       {/* 图片预览 */}
       <ImageViewer
         visible={imageViewerVisible}
-        uri={normalizeImageUrl(message.fallbackUrl || message.imageUrl || message.webpUrl || '')}
+        uri={normalizeImageUrlWithAuth(message.fallbackUrl || message.imageUrl || message.webpUrl || '', userId)}
         onClose={() => setImageViewerVisible(false)}
       />
     </>

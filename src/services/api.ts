@@ -15,16 +15,31 @@ export const BASE_DOMAIN = API_DOMAIN.replace('https://', '');
 
 // Normalize image URL - match H5 implementation
 export const normalizeImageUrl = (url?: string): string => {
+  return normalizeImageUrlWithAuth(url);
+};
+
+// Normalize image URL with authentication for mobile
+export const normalizeImageUrlWithAuth = (url?: string, userId?: string): string => {
   if (!url) return '';
   if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('file:')) return url;
 
   const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
 
+  let finalUrl: string;
   if (cleanUrl.startsWith('ms/')) {
-    return `https://${BASE_DOMAIN}/${cleanUrl}`;
+    finalUrl = `https://${BASE_DOMAIN}/${cleanUrl}`;
+  } else {
+    finalUrl = `${API_BASE_URL}${cleanUrl}`;
   }
 
-  return `${API_BASE_URL}${cleanUrl}`;
+  // 附加 userId 查询参数用于后端验证（移动端图片访问）
+  if (userId && !finalUrl.includes('?')) {
+    finalUrl += `?userId=${userId}`;
+  } else if (userId && finalUrl.includes('?')) {
+    finalUrl += `&userId=${userId}`;
+  }
+
+  return finalUrl;
 };
 
 // 存储键

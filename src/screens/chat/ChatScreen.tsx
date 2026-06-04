@@ -162,9 +162,10 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         isMe={amITheSender}
         onRecall={handleRecall}
         onDelete={handleDelete}
+        userId={userId}
       />
     );
-  }, [isMe, handleRecall, handleDelete]);
+  }, [isMe, handleRecall, handleDelete, userId]);
 
   return (
     <View style={styles.container}>
