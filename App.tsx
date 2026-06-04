@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ChatProvider } from './src/contexts/ChatContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
@@ -27,10 +28,13 @@ export default function App() {
 const AppNavigatorWithStatusBar = () => {
   const { isDark } = require('./src/contexts/ThemeContext').useTheme();
 
+  // iOS 需要 top safe area，Android 不需要
+  const safeEdges = Platform.OS === 'ios' ? ['top', 'left', 'right'] : ['left', 'right'];
+
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#000000' : '#ffffff' }} edges={['left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#000000' : '#ffffff' }} edges={safeEdges}>
         <AppNavigator />
       </SafeAreaView>
     </>
