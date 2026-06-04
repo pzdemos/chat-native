@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -13,22 +13,38 @@ import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
-import { api } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
-import { Friend, FriendRequest } from '../../types';
-import { RootStackParamList } from '../../types';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { api } from '../../services/api';
+import { Friend, FriendRequest, RootStackParamList } from '../../types';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const FriendsScreen: React.FC = () => {
   const { friends, loadFriends, setActiveChat } = useChat();
   const { user } = useAuth();
-  const { colors } = useTheme();
-  const navigation = useNavigation<NativeStackScreenProps<RootStackParamList, 'Chat'>>();
+  const { colors, isDark } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: '',
+      headerStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => setShowAddModal(true)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={{ marginRight: 16 }}
+        >
+          <Ionicons name="person-add-outline" size={24} color={colors.primary} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, colors, isDark]);
 
   useEffect(() => {
     loadFriends();
@@ -196,14 +212,6 @@ export const FriendsScreen: React.FC = () => {
           />
         )}
       </View>
-
-      {/* 添加好友按钮 */}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-        onPress={() => setShowAddModal(true)}
-      >
-        <Ionicons name="person-add" size={24} color="#fff" />
-      </TouchableOpacity>
 
       {/* 搜索用户弹窗 */}
       <Modal
@@ -375,22 +383,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     color: '#94a3b8',
-  },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#3AA882',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   modalOverlay: {
     flex: 1,
