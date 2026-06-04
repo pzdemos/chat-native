@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { User } from '../types';
 import { storage, api } from '../services/api';
 import { socketService } from '../services/socket';
@@ -43,14 +43,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const setEnterKeySends = async (value: boolean) => {
+  const setEnterKeySends = useCallback(async (value: boolean) => {
     setEnterKeySendsState(value);
     try {
       await AsyncStorage.setItem('enter_key_sends', value.toString());
     } catch (error) {
       console.error('保存设置失败:', error);
     }
-  };
+  }, []);
 
   const loadStoredUser = async () => {
     try {
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (username: string, password: string) => {
+  const login = useCallback(async (username: string, password: string) => {
     setIsLoading(true);
     try {
       const response = await api.login(username, password);
@@ -83,9 +83,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (username: string, password: string) => {
+  const register = useCallback(async (username: string, password: string) => {
     setIsLoading(true);
     try {
       const response = await api.register(username, password);
@@ -101,17 +101,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     socketService.disconnect();
     await storage.clearUser();
     setUser(null);
     api.setUserId('');
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ user, userId, isLoading, enterKeySends, setEnterKeySends, login, register, logout }),
+    [user, userId, isLoading, enterKeySends, setEnterKeySends, login, register, logout]
+  );
 
   return (
-    <AuthContext.Provider value={{ user, userId, isLoading, enterKeySends, setEnterKeySends, login, register, logout }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
