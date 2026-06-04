@@ -158,7 +158,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <TextInput
           style={[
             styles.input,
-            !enterKeySends && styles.inputMultiline
+            !enterKeySends && styles.inputMultiline,
+            value.trim() && styles.inputHasContent
           ]}
           value={value}
           onChangeText={onChangeText}
@@ -166,6 +167,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           placeholderTextColor={Colors.slate400}
           multiline={!enterKeySends}
           returnKeyType={enterKeySends ? 'send' : 'default'}
+          returnKeyLabel="Send"
           onSubmitEditing={handleSubmitEditing}
           blurOnSubmit={false}
           textAlignVertical={!enterKeySends ? 'top' : 'center'}
@@ -284,11 +286,16 @@ const styles = StyleSheet.create({
     height: 40,
     color: Colors.slate800,
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   inputMultiline: {
     minHeight: 40,
     maxHeight: 100,
     height: 'auto',
+  },
+  inputHasContent: {
+    borderColor: Colors.primary,
   },
   sendButton: {
     width: 40,
