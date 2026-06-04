@@ -30,7 +30,7 @@ const AppNavigatorWithStatusBar = () => {
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#000000' : '#ffffff' }} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#000000' : '#ffffff' }} edges={['left', 'right']}>
         <AppNavigator />
       </SafeAreaView>
     </>
