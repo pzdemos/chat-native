@@ -8,21 +8,12 @@ import {
   Alert,
   Text,
   Pressable,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
-
-// 与 H5 版本匹配的颜色
-const Colors = {
-  primary: '#22c55e',
-  slate50: '#f8fafc',
-  slate100: '#f1f5f9',
-  slate400: '#94a3b8',
-  slate800: '#1e293b',
-  white: '#ffffff',
-  red500: '#ef4444',
-};
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface ChatInputProps {
   value: string;
@@ -41,6 +32,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onVoiceSend,
   enterKeySends = true,
 }) => {
+  const { colors } = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
@@ -152,22 +144,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onPress={() => setShowActions(!showActions)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="add-circle-outline" size={28} color={Colors.slate400} />
+          <Ionicons name="add-circle-outline" size={28} color={colors.textLight} />
         </TouchableOpacity>
 
         <TextInput
           style={[
             styles.input,
-            !enterKeySends && styles.inputMultiline,
-            value.trim() && styles.inputHasContent
+            !enterKeySends && styles.inputMultiline
           ]}
           value={value}
           onChangeText={onChangeText}
           placeholder="输入消息..."
-          placeholderTextColor={Colors.slate400}
+          placeholderTextColor={colors.textLight}
           multiline={!enterKeySends}
           returnKeyType={enterKeySends ? 'send' : 'default'}
-          returnKeyLabel="Send"
           onSubmitEditing={handleSubmitEditing}
           blurOnSubmit={false}
           textAlignVertical={!enterKeySends ? 'top' : 'center'}
@@ -179,7 +169,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onPress={handleSend}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="send" size={18} color={Colors.white} />
+            <Ionicons name="send" size={18} color={colors.white} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -191,7 +181,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             <Ionicons
               name="mic-outline"
               size={22}
-              color={isRecording ? Colors.red500 : Colors.slate400}
+              color={isRecording ? colors.error : colors.textLight}
             />
           </TouchableOpacity>
         )}
@@ -251,7 +241,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, label, onPress }) => {
   return (
     <TouchableOpacity style={styles.actionItem} onPress={onPress}>
       <View style={styles.actionIcon}>
-        <Ionicons name={icon as any} size={28} color={Colors.primary} />
+        <Ionicons name={icon as any} size={28} color={colors.primary} />
       </View>
       <Text style={styles.actionLabel}>{label}</Text>
     </TouchableOpacity>
@@ -264,9 +254,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: Colors.white,
+    backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: Colors.slate100,
+    borderTopColor: colors.borderLight,
   },
   iconButton: {
     width: 44,
@@ -278,29 +268,24 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: Colors.slate50,
+    backgroundColor: colors.borderLight,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 15,
     height: 40,
-    color: Colors.slate800,
+    color: colors.text,
     marginRight: 12,
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   inputMultiline: {
     minHeight: 40,
     maxHeight: 100,
     height: 'auto',
   },
-  inputHasContent: {
-    borderColor: Colors.primary,
-  },
   sendButton: {
     width: 40,
     height: 40,
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -311,7 +296,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   actionsPanel: {
-    backgroundColor: Colors.white,
+    backgroundColor: colors.white,
     flexDirection: 'row',
     paddingVertical: 24,
     paddingHorizontal: 32,
@@ -325,7 +310,7 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 56,
     height: 56,
-    backgroundColor: Colors.slate50,
+    backgroundColor: colors.borderLight,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
@@ -333,7 +318,7 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: 14,
-    color: Colors.slate800,
+    color: colors.text,
   },
   recordingIndicator: {
     position: 'absolute',
@@ -350,11 +335,11 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.red500,
+    backgroundColor: colors.error,
     marginRight: 8,
   },
   recordingText: {
-    color: Colors.white,
+    color: colors.white,
     fontSize: 14,
   },
 });
