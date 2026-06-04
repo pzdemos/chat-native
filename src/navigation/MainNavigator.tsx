@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 import { ChatsScreen } from '../screens/chat/ChatsScreen';
 import { FriendsScreen } from '../screens/chat/FriendsScreen';
 import { SettingsScreen } from '../screens/chat/SettingsScreen';
@@ -83,6 +84,10 @@ export const MainNavigator: React.FC = () => {
           headerStyle: { backgroundColor: colors.background },
           headerTitleStyle: { fontSize: 18, fontWeight: '600', color: colors.text },
           headerTintColor: colors.primary,
+          // Android: 设置更合理的 header 高度
+          ...(Platform.OS === 'android' && {
+            headerHeight: 56,
+          }),
         })}
       />
     </Stack.Navigator>
