@@ -25,7 +25,7 @@ export const AppNavigator: React.FC = () => {
         {isLoading ? (
           <Stack.Screen name="Loading" component={LoadingScreen} />
         ) : user ? (
-          <Stack.Screen name="MainTabs" component={MainNavigator} />
+          <Stack.Screen name="MainTabs" component={MainNavigator} options={{ headerShown: false }} />
         ) : (
           <Stack.Screen name="Auth" component={AuthScreen} />
         )}
