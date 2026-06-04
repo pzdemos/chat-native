@@ -7,24 +7,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Friend } from '../../types';
 
-// 与 H5 版本匹配的颜色
-const Colors = {
-  primary: '#22c55e',
-  slate50: '#f8fafc',
-  slate100: '#f1f5f9',
-  slate400: '#94a3b8',
-  slate700: '#64748b',
-  slate800: '#1e293b',
-  white: '#ffffff',
-  red500: '#ef4444',
-};
-
 export const ChatsScreen: React.FC = () => {
   const { friends, isLoadingFriends, loadFriends, setActiveChat } = useChat();
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -86,7 +76,7 @@ export const ChatsScreen: React.FC = () => {
     <View style={styles.container}>
       {friends.length === 0 && !isLoadingFriends ? (
         <View style={styles.empty}>
-          <Ionicons name="chatbubbles-outline" size={64} color={Colors.slate100} />
+          <Ionicons name="chatbubbles-outline" size={64} color={colors.borderLight} />
           <Text style={styles.emptyText}>暂无聊天</Text>
           <Text style={styles.emptySubtext}>添加好友开始聊天吧</Text>
         </View>
@@ -107,26 +97,26 @@ export const ChatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate50,
+    backgroundColor: colors.borderLight,
   },
   friendItem: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: Colors.white,
+    backgroundColor: colors.white,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.slate100,
+    borderBottomColor: colors.borderLight,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarText: {
-    color: Colors.white,
+    color: colors.white,
     fontSize: 18,
     fontWeight: '600',
   },
@@ -143,12 +133,12 @@ const styles = StyleSheet.create({
   friendName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.slate800,
+    color: colors.text,
     flex: 1,
   },
   messageTime: {
     fontSize: 12,
-    color: Colors.slate400,
+    color: colors.textLight,
     marginLeft: 8,
   },
   friendFooter: {
@@ -158,11 +148,11 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 14,
-    color: Colors.slate700,
+    color: colors.text,
     flex: 1,
   },
   badge: {
-    backgroundColor: Colors.red500,
+    backgroundColor: colors.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -172,7 +162,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   badgeText: {
-    color: Colors.white,
+    color: colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -187,12 +177,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: Colors.slate700,
+    color: colors.text,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: Colors.slate400,
+    color: colors.textLight,
     marginTop: 8,
   },
 });
