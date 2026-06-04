@@ -164,7 +164,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [isMe, handleRecall, handleDelete]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
+    <View style={styles.container}>
       <View style={[styles.messagesWrapper, { backgroundColor: colors.borderLight }]}>
         <FlatList
           ref={flatListRef}
@@ -183,14 +183,16 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         />
       </View>
 
-      <ChatInput
-        value={inputText}
-        onChangeText={handleInputChange}
-        onSend={handleSend}
-        onImageSend={handleImageSend}
-        onVoiceSend={handleVoiceSend}
-        enterKeySends={enterKeySends}
-      />
+      <View style={[styles.bottomBar, { backgroundColor: colors.card }, Platform.OS === 'ios' && { paddingBottom: bottomInset }]}>
+        <ChatInput
+          value={inputText}
+          onChangeText={handleInputChange}
+          onSend={handleSend}
+          onImageSend={handleImageSend}
+          onVoiceSend={handleVoiceSend}
+          enterKeySends={enterKeySends}
+        />
+      </View>
     </View>
   );
 };
@@ -201,6 +203,10 @@ const styles = StyleSheet.create({
   },
   messagesWrapper: {
     flex: 1,
+  },
+  bottomBar: {
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
   flatList: {
     flex: 1,
