@@ -12,11 +12,11 @@ interface ThemeContextType {
 }
 
 const lightColors = {
-  primary: '#3b82f6',
-  primaryDark: '#2563eb',
-  secondary: '#8b5cf6',
+  primary: '#22c55e', // 绿色
+  primaryDark: '#16a34a',
+  secondary: '#10b981',
 
-  background: '#f8fafc',
+  background: '#ffffff', // 纯白背景
   card: '#ffffff',
 
   text: '#1e293b',
@@ -29,14 +29,14 @@ const lightColors = {
   success: '#22c55e',
   warning: '#f59e0b',
   error: '#ef4444',
-  info: '#3b82f6',
+  info: '#22c55e',
 
   white: '#ffffff',
   black: '#000000',
 
   // Chat specific
-  bubbleMe: '#3b82f6',
-  bubbleOther: '#ffffff',
+  bubbleMe: '#22c55e', // 绿色气泡
+  bubbleOther: '#f1f5f9', // 浅灰气泡
   bubbleTextMe: '#ffffff',
   bubbleTextOther: '#1e293b',
 
@@ -45,31 +45,31 @@ const lightColors = {
 };
 
 const darkColors = {
-  primary: '#60a5fa',
-  primaryDark: '#3b82f6',
-  secondary: '#a78bfa',
+  primary: '#22c55e', // 绿色
+  primaryDark: '#16a34a',
+  secondary: '#10b981',
 
-  background: '#0f172a',
-  card: '#1e293b',
+  background: '#000000', // 纯黑背景
+  card: '#1a1a1a',
 
   text: '#f1f5f9',
   textSecondary: '#94a3b8',
   textLight: '#64748b',
 
-  border: '#334155',
+  border: '#333333',
   borderLight: '#1e293b',
 
   success: '#22c55e',
   warning: '#f59e0b',
   error: '#ef4444',
-  info: '#3b82f6',
+  info: '#22c55e',
 
   white: '#ffffff',
   black: '#000000',
 
   // Chat specific
-  bubbleMe: '#3b82f6',
-  bubbleOther: '#1e293b',
+  bubbleMe: '#22c55e', // 绿色气泡
+  bubbleOther: '#2a2a2a',
   bubbleTextMe: '#ffffff',
   bubbleTextOther: '#f1f5f9',
 
