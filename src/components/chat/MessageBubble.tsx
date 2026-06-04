@@ -57,8 +57,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   // 撤回的消息 - H5 风格
   if (message.isRecalled) {
     return (
-      <View style={styles.recalledContainer}>
-        <Text style={styles.recalledText}>
+      <View style={[styles.recalledContainer, { backgroundColor: colors.borderLight }]}>
+        <Text style={[styles.recalledText, { color: colors.textLight, backgroundColor: colors.borderLight, borderColor: colors.border }]}>
           {isMe ? '你撤回了一条消息' : '对方撤回了一条消息'}
         </Text>
       </View>
@@ -74,7 +74,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     switch (message.messageType) {
       case 'text':
         return (
-          <Text style={[styles.messageText, isMe && styles.messageTextMe]}>
+          <Text style={[styles.messageText, { color: isMe ? colors.white : colors.text }]}>
             {message.content}
           </Text>
         );
@@ -85,7 +85,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         );
         return (
           <Pressable onPress={() => setImageViewerVisible(true)}>
-            <View style={styles.imageContainer}>
+            <View style={[styles.imageContainer, { backgroundColor: colors.borderLight }]}>
               <Image
                 source={{ uri: displayImageUrl }}
                 style={styles.image}
@@ -124,16 +124,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               style={styles.menuOverlay}
               onPress={() => setShowMenu(false)}
             />
-            <View style={[styles.contextMenu, isMe ? styles.menuRight : styles.menuLeft]}>
+            <View style={[styles.contextMenu, { backgroundColor: colors.card }, isMe ? styles.menuRight : styles.menuLeft]}>
               {isMe && message.status === 'sent' && (
                 <TouchableOpacity style={styles.menuItem} onPress={handleRecall}>
                   <Ionicons name="undo-outline" size={14} color={colors.text} />
-                  <Text style={styles.menuItemText}>撤回</Text>
+                  <Text style={[styles.menuItemText, { color: colors.text }]}>撤回</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.menuItem} onPress={handleDelete}>
                 <Ionicons name="trash-outline" size={14} color={colors.error} />
-                <Text style={[styles.menuItemText, styles.menuItemTextDelete]}>删除</Text>
+                <Text style={[styles.menuItemText, { color: colors.error }]}>删除</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -148,7 +148,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           <View
             style={[
               styles.bubble,
-              isMe ? styles.bubbleMe : styles.bubbleOther,
+              isMe ? [styles.bubbleMe, { backgroundColor: colors.primary }] : [styles.bubbleOther, { backgroundColor: colors.card, borderColor: colors.borderLight }],
               message.messageType === 'image' && styles.bubbleImage,
               message.messageType === 'voice' && styles.bubbleVoice,
             ]}
@@ -164,7 +164,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             {message.status === 'error' && isMe && (
               <Ionicons name="alert-circle" size={8} color={colors.error} style={styles.statusIcon} />
             )}
-            <Text style={styles.time}>{formatTime()}</Text>
+            <Text style={[styles.time, { color: colors.textLight }]}>{formatTime()}</Text>
           </View>
         </Pressable>
       </View>
@@ -201,14 +201,11 @@ const styles = StyleSheet.create({
   },
   // 接收方: 白色背景，左侧直角
   bubbleOther: {
-    backgroundColor: colors.white,
     borderTopLeftRadius: 4,
     borderWidth: 1,
-    borderColor: colors.borderLight,
   },
   // 发送方: 蓝色背景，右侧直角
   bubbleMe: {
-    backgroundColor: colors.primary,
     borderTopRightRadius: 4,
   },
   bubbleImage: {
@@ -226,17 +223,12 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 15,
-    color: colors.text,
     lineHeight: 21,
-  },
-  messageTextMe: {
-    color: colors.white,
   },
   // 图片容器 - H5: max-w-[240px]
   imageContainer: {
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: colors.borderLight,
     minWidth: 150,
     minHeight: 150,
   },
@@ -271,7 +263,6 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 10,
-    color: colors.textLight,
   },
   // 撤回消息
   recalledContainer: {
@@ -280,13 +271,10 @@ const styles = StyleSheet.create({
   },
   recalledText: {
     fontSize: 12,
-    color: colors.textLight,
-    backgroundColor: colors.borderLight,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   // 长按菜单
   menuOverlay: {
@@ -299,7 +287,6 @@ const styles = StyleSheet.create({
   },
   contextMenu: {
     position: 'absolute',
-    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 4,
     shadowColor: '#000',
@@ -325,10 +312,7 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     fontSize: 14,
-    color: colors.text,
     marginLeft: 10,
   },
-  menuItemTextDelete: {
-    color: colors.error,
-  },
+  menuItemTextDelete: {},
 });

@@ -24,14 +24,14 @@ export const ChatsScreen: React.FC = () => {
   const renderFriend = useCallback(({ item }: { item: Friend }) => {
     return (
       <TouchableOpacity
-        style={styles.friendItem}
+        style={[styles.friendItem, { backgroundColor: colors.card, borderBottomColor: colors.borderLight }]}
         onPress={() => {
           setActiveChat(item);
           // @ts-ignore
           navigation.navigate('Chat', { friend: item });
         }}
       >
-        <View style={styles.avatar}>
+        <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
             {item.username.charAt(0).toUpperCase()}
           </Text>
@@ -39,11 +39,11 @@ export const ChatsScreen: React.FC = () => {
 
         <View style={styles.friendInfo}>
           <View style={styles.friendHeader}>
-            <Text style={styles.friendName} numberOfLines={1}>
+            <Text style={[styles.friendName, { color: colors.text }]} numberOfLines={1}>
               {item.username}
             </Text>
             {item.lastMessage && (
-              <Text style={styles.messageTime}>
+              <Text style={[styles.messageTime, { color: colors.textLight }]}>
                 {new Date(item.lastMessage.timestamp).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -53,14 +53,14 @@ export const ChatsScreen: React.FC = () => {
           </View>
 
           <View style={styles.friendFooter}>
-            <Text style={styles.lastMessage} numberOfLines={1}>
+            <Text style={[styles.lastMessage, { color: colors.text }]} numberOfLines={1}>
               {item.lastMessage?.isRecalled
                 ? '[消息已撤回]'
                 : item.lastMessage?.content || '暂无消息'}
             </Text>
 
             {item.unreadCount && item.unreadCount > 0 ? (
-              <View style={styles.badge}>
+              <View style={[styles.badge, { backgroundColor: colors.error }]}>
                 <Text style={styles.badgeText}>
                   {item.unreadCount > 99 ? '99+' : item.unreadCount}
                 </Text>
@@ -70,15 +70,15 @@ export const ChatsScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
     );
-  }, [navigation, setActiveChat]);
+  }, [navigation, setActiveChat, colors]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
       {friends.length === 0 && !isLoadingFriends ? (
         <View style={styles.empty}>
-          <Ionicons name="chatbubbles-outline" size={64} color={colors.borderLight} />
-          <Text style={styles.emptyText}>暂无聊天</Text>
-          <Text style={styles.emptySubtext}>添加好友开始聊天吧</Text>
+          <Ionicons name="chatbubbles-outline" size={64} color={colors.textLight} />
+          <Text style={[styles.emptyText, { color: colors.text }]}>暂无聊天</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textLight }]}>添加好友开始聊天吧</Text>
         </View>
       ) : (
         <FlatList
@@ -97,26 +97,22 @@ export const ChatsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.borderLight,
   },
   friendItem: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: colors.white,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderLight,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarText: {
-    color: colors.white,
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -133,12 +129,10 @@ const styles = StyleSheet.create({
   friendName: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.text,
     flex: 1,
   },
   messageTime: {
     fontSize: 12,
-    color: colors.textLight,
     marginLeft: 8,
   },
   friendFooter: {
@@ -148,11 +142,9 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 14,
-    color: colors.text,
     flex: 1,
   },
   badge: {
-    backgroundColor: colors.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -162,7 +154,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   badgeText: {
-    color: colors.white,
+    color: '#fff',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -177,12 +169,10 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: colors.text,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.textLight,
     marginTop: 8,
   },
 });
