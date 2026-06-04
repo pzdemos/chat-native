@@ -5,7 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -23,7 +25,7 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={Platform.OS === 'android' ? ['top'] : []}>
       {/* 用户信息卡片 */}
       <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
         <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
@@ -123,7 +125,7 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       ) : null}
-    </View>
+    </SafeAreaView>
   );
 };
 

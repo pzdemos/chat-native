@@ -5,7 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useChat } from '../../contexts/ChatContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
@@ -74,7 +76,7 @@ export const ChatsScreen: React.FC = () => {
   }, [navigation, setActiveChat, colors]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.borderLight }]} edges={Platform.OS === 'android' ? ['top'] : []}>
       {friends.length === 0 && !isLoadingFriends ? (
         <View style={styles.empty}>
           <Ionicons name="chatbubbles-outline" size={64} color={colors.textLight} />
@@ -91,7 +93,7 @@ export const ChatsScreen: React.FC = () => {
           contentContainerStyle={friends.length === 0 ? styles.emptyList : undefined}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

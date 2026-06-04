@@ -20,10 +20,7 @@ const TabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: true,
-        headerTitle: '',
-        headerTransparent: true,
-        headerStyle: { backgroundColor: 'transparent', shadowOpacity: 0, elevation: 0, borderWidth: 0 },
+        headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,

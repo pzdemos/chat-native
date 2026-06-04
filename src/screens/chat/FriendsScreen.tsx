@@ -8,7 +8,9 @@ import {
   StyleSheet,
   Alert,
   Modal,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -164,7 +166,7 @@ export const FriendsScreen: React.FC = () => {
   }, [colors, handleRespondRequest]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.borderLight }]} edges={Platform.OS === 'android' ? ['top'] : []}>
       {/* 顶部栏 */}
       <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <Text style={[styles.topBarTitle, { color: colors.text }]}>好友</Text>
@@ -260,7 +262,7 @@ export const FriendsScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
