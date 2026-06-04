@@ -76,29 +76,34 @@ export const ChatsScreen: React.FC = () => {
   }, [navigation, setActiveChat, colors]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.borderLight }]} edges={Platform.OS === 'android' ? ['top'] : []}>
-      {friends.length === 0 && !isLoadingFriends ? (
-        <View style={styles.empty}>
-          <Ionicons name="chatbubbles-outline" size={64} color={colors.textLight} />
-          <Text style={[styles.emptyText, { color: colors.text }]}>暂无聊天</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textLight }]}>添加好友开始聊天吧</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={friends}
-          renderItem={renderFriend}
-          keyExtractor={(item) => item.userId}
-          refreshing={isLoadingFriends}
-          onRefresh={loadFriends}
-          contentContainerStyle={friends.length === 0 ? styles.emptyList : undefined}
-        />
-      )}
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={Platform.OS === 'android' ? ['top'] : []}>
+      <View style={[styles.contentWrapper, { backgroundColor: colors.borderLight }]}>
+        {friends.length === 0 && !isLoadingFriends ? (
+          <View style={styles.empty}>
+            <Ionicons name="chatbubbles-outline" size={64} color={colors.textLight} />
+            <Text style={[styles.emptyText, { color: colors.text }]}>暂无聊天</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textLight }]}>添加好友开始聊天吧</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={friends}
+            renderItem={renderFriend}
+            keyExtractor={(item) => item.userId}
+            refreshing={isLoadingFriends}
+            onRefresh={loadFriends}
+            contentContainerStyle={friends.length === 0 ? styles.emptyList : undefined}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
 
 const createStyles = (c: any) => StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  contentWrapper: {
     flex: 1,
   },
   friendItem: {

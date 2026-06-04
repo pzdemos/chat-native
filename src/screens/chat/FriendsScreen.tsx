@@ -166,49 +166,51 @@ export const FriendsScreen: React.FC = () => {
   }, [colors, handleRespondRequest]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.borderLight }]} edges={Platform.OS === 'android' ? ['top'] : []}>
-      {/* 顶部栏 */}
-      <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <Text style={[styles.topBarTitle, { color: colors.text }]}>好友</Text>
-        <TouchableOpacity
-          onPress={() => setShowAddModal(true)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={styles.addTopButton}
-        >
-          <Ionicons name="person-add-outline" size={22} color={colors.primary} />
-        </TouchableOpacity>
-      </View>
-
-      {/* 好友请求列表 */}
-      {requests.length > 0 && (
-        <View style={[styles.requestsSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-            好友请求 ({requests.length})
-          </Text>
-          <FlatList
-            data={requests}
-            renderItem={renderRequest}
-            keyExtractor={(item) => item._id}
-            scrollEnabled={false}
-          />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={Platform.OS === 'android' ? ['top'] : []}>
+      <View style={[styles.contentWrapper, { backgroundColor: colors.borderLight }]}>
+        {/* 顶部栏 */}
+        <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+          <Text style={[styles.topBarTitle, { color: colors.text }]}>好友</Text>
+          <TouchableOpacity
+            onPress={() => setShowAddModal(true)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.addTopButton}
+          >
+            <Ionicons name="person-add-outline" size={22} color={colors.primary} />
+          </TouchableOpacity>
         </View>
-      )}
 
-      {/* 好友列表 */}
-      <View style={[styles.friendsSection, { backgroundColor: colors.card }]}>
-        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>我的好友 ({friends.length})</Text>
-        {friends.length === 0 ? (
-          <View style={styles.empty}>
-            <Text style={[styles.emptyText, { color: colors.textLight }]}>暂无好友</Text>
+        {/* 好友请求列表 */}
+        {requests.length > 0 && (
+          <View style={[styles.requestsSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+              好友请求 ({requests.length})
+            </Text>
+            <FlatList
+              data={requests}
+              renderItem={renderRequest}
+              keyExtractor={(item) => item._id}
+              scrollEnabled={false}
+            />
           </View>
-        ) : (
-          <FlatList
-            data={friends}
-            renderItem={renderFriend}
-            keyExtractor={(item) => item.userId}
-            scrollEnabled={false}
-          />
         )}
+
+        {/* 好友列表 */}
+        <View style={[styles.friendsSection, { backgroundColor: colors.card }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>我的好友 ({friends.length})</Text>
+          {friends.length === 0 ? (
+            <View style={styles.empty}>
+              <Text style={[styles.emptyText, { color: colors.textLight }]}>暂无好友</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={friends}
+              renderItem={renderFriend}
+              keyExtractor={(item) => item.userId}
+              scrollEnabled={false}
+            />
+          )}
+        </View>
       </View>
 
       {/* 搜索用户弹窗 */}
@@ -274,7 +276,9 @@ type FriendsColors = {
 const createStyles = (c: FriendsColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: c.borderLight,
+  },
+  contentWrapper: {
+    flex: 1,
   },
   topBar: {
     flexDirection: 'row',
