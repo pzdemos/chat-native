@@ -136,22 +136,6 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     );
   }, [isMe, handleRecall, handleDelete]);
 
-  const renderTypingIndicator = () => {
-    const isTyping = typingUsers.includes(friend.userId);
-    if (!isTyping) return null;
-
-    return (
-      <View style={styles.typingIndicator}>
-        <View style={styles.typingDots}>
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-        </View>
-        <Text style={styles.typingText}>正在输入...</Text>
-      </View>
-    );
-  };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -164,7 +148,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         renderItem={renderMessage}
         keyExtractor={(item) => item._id || item.timestamp}
         contentContainerStyle={styles.messagesList}
-        ListFooterComponent={renderTypingIndicator}
+        ListFooterComponent={<TypingFooterWrapper typingUsers={typingUsers} friendUserId={friend.userId} />}
         onContentSizeChange={() => {
           if (messages.length > 0) {
             flatListRef.current?.scrollToEnd({ animated: false });
@@ -184,6 +168,23 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     </KeyboardAvoidingView>
   );
 };
+
+// Typing indicator footer component
+const TypingFooterWrapper: React.FC<{ typingUsers: string[]; friendUserId: string }> = React.memo(({ typingUsers, friendUserId }) => {
+  const isTyping = typingUsers.includes(friendUserId);
+  if (!isTyping) return null;
+
+  return (
+    <View style={styles.typingIndicator}>
+      <View style={styles.typingDots}>
+        <View style={[styles.dot, styles.dotAnimated]} />
+        <View style={[styles.dot, styles.dotAnimated]} />
+        <View style={[styles.dot, styles.dotAnimated]} />
+      </View>
+      <Text style={styles.typingText}>正在输入...</Text>
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -213,6 +214,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#94a3b8',
     marginRight: 4,
+  },
+  dotAnimated: {
+    opacity: 0.7,
   },
   typingText: {
     fontSize: 12,
