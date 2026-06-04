@@ -16,7 +16,7 @@ export const AuthScreen: React.FC = () => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
-  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,18 +25,21 @@ export const AuthScreen: React.FC = () => {
     setLoading(true);
 
     try {
+      if (!username.trim()) {
+        setError('请输入用户名');
+        setLoading(false);
+        return;
+      }
+      if (!password.trim()) {
+        setError('请输入密码');
+        setLoading(false);
+        return;
+      }
+
       if (isLogin) {
-        if (!userId.trim()) {
-          setError('请输入用户 ID');
-          return;
-        }
-        await login(userId);
+        await login(username, password);
       } else {
-        if (!username.trim()) {
-          setError('请输入用户名');
-          return;
-        }
-        await register(username);
+        await register(username, password);
       }
     } catch (err: any) {
       setError(err.message || '操作失败，请重试');
@@ -62,25 +65,22 @@ export const AuthScreen: React.FC = () => {
         </View>
 
         <View style={styles.form}>
-          {!isLogin && (
-            <TextInput
-              style={styles.input}
-              placeholder="用户名"
-              value={username}
-              onChangeText={setUsername}
-              autoCapitalize="none"
-            />
-          )}
+          <TextInput
+            style={styles.input}
+            placeholder="用户名"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
 
-          {isLogin && (
-            <TextInput
-              style={styles.input}
-              placeholder="用户 ID"
-              value={userId}
-              onChangeText={setUserId}
-              autoCapitalize="none"
-            />
-          )}
+          <TextInput
+            style={styles.input}
+            placeholder="密码"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoCapitalize="none"
+          />
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -104,7 +104,7 @@ export const AuthScreen: React.FC = () => {
               setIsLogin(!isLogin);
               setError('');
               setUsername('');
-              setUserId('');
+              setPassword('');
             }}
           >
             <Text style={styles.switchText}>

@@ -105,17 +105,17 @@ class API {
   }
 
   // 认证相关
-  async login(userId: string): Promise<{ userId: string; username: string }> {
+  async login(username: string, password: string): Promise<{ userId: string; username: string }> {
     return this.request('users/login', {
       method: 'POST',
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ username, password }),
     });
   }
 
-  async register(username: string): Promise<{ userId: string; username: string }> {
+  async register(username: string, password: string): Promise<{ userId: string; username: string }> {
     return this.request('users/register', {
       method: 'POST',
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ username, password }),
     });
   }
 

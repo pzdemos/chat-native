@@ -7,8 +7,8 @@ interface AuthContextData {
   user: User | null;
   userId: string | null;
   isLoading: boolean;
-  login: (userId?: string) => Promise<void>;
-  register: (username: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -42,10 +42,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (userId?: string) => {
+  const login = async (username: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await api.login(userId || '');
+      const response = await api.login(username, password);
       const userData = { userId: response.userId, username: response.username };
 
       setUser(userData);
@@ -60,10 +60,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (username: string) => {
+  const register = async (username: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await api.register(username);
+      const response = await api.register(username, password);
       const userData = { userId: response.userId, username: response.username };
 
       setUser(userData);
