@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 // 加载组件
 const LoadingScreen: React.FC = () => (
   <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color="#22c55e" />
+    <ActivityIndicator size="large" color="#3AA882" />
   </View>
 );
 

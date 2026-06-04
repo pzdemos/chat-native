@@ -6,6 +6,7 @@ import { ChatsScreen } from '../screens/chat/ChatsScreen';
 import { FriendsScreen } from '../screens/chat/FriendsScreen';
 import { SettingsScreen } from '../screens/chat/SettingsScreen';
 import { ChatScreen } from '../screens/chat/ChatScreen';
+import { useTheme } from '../contexts/ThemeContext';
 import { MainTabParamList, RootStackParamList, Friend } from '../types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -14,16 +15,17 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Tab 导航器
 const TabNavigator: React.FC = () => {
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#22c55e',
-        tabBarInactiveTintColor: '#94a3b8',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textLight,
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: colors.card,
           borderTopWidth: 1,
-          borderTopColor: '#e2e8f0',
+          borderTopColor: colors.border,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
@@ -66,6 +68,7 @@ const TabNavigator: React.FC = () => {
 
 // 主导航器 (包含 Tab 和 Chat 页面)
 export const MainNavigator: React.FC = () => {
+  const { colors, isDark } = useTheme();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -79,9 +82,9 @@ export const MainNavigator: React.FC = () => {
         options={({ route }) => ({
           headerShown: true,
           title: (route.params?.friend as Friend)?.username || '聊天',
-          headerStyle: { backgroundColor: '#fff' },
-          headerTitleStyle: { fontSize: 18, fontWeight: '600' },
-          headerTintColor: '#22c55e',
+          headerStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
+          headerTitleStyle: { fontSize: 18, fontWeight: '600', color: colors.text },
+          headerTintColor: colors.primary,
         })}
       />
     </Stack.Navigator>

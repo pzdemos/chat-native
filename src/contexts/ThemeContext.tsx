@@ -12,11 +12,11 @@ interface ThemeContextType {
 }
 
 const lightColors = {
-  primary: '#22c55e', // 绿色
-  primaryDark: '#16a34a',
-  secondary: '#10b981',
+  primary: '#3AA882',
+  primaryDark: '#2D8A6A',
+  secondary: '#4FC99B',
 
-  background: '#ffffff', // 纯白背景
+  background: '#ffffff',
   card: '#ffffff',
 
   text: '#1e293b',
@@ -26,30 +26,29 @@ const lightColors = {
   border: '#e2e8f0',
   borderLight: '#f1f5f9',
 
-  success: '#22c55e',
+  success: '#3AA882',
   warning: '#f59e0b',
   error: '#ef4444',
-  info: '#22c55e',
+  info: '#3AA882',
 
   white: '#ffffff',
   black: '#000000',
 
-  // Chat specific
-  bubbleMe: '#22c55e', // 绿色气泡
-  bubbleOther: '#f1f5f9', // 浅灰气泡
+  bubbleMe: '#3AA882',
+  bubbleOther: '#f1f5f9',
   bubbleTextMe: '#ffffff',
   bubbleTextOther: '#1e293b',
 
   offline: '#94a3b8',
-  online: '#22c55e',
+  online: '#3AA882',
 };
 
 const darkColors = {
-  primary: '#22c55e', // 绿色
-  primaryDark: '#16a34a',
-  secondary: '#10b981',
+  primary: '#3AA882',
+  primaryDark: '#2D8A6A',
+  secondary: '#4FC99B',
 
-  background: '#000000', // 纯黑背景
+  background: '#000000',
   card: '#1a1a1a',
 
   text: '#f1f5f9',
@@ -59,22 +58,21 @@ const darkColors = {
   border: '#333333',
   borderLight: '#1e293b',
 
-  success: '#22c55e',
+  success: '#3AA882',
   warning: '#f59e0b',
   error: '#ef4444',
-  info: '#22c55e',
+  info: '#3AA882',
 
   white: '#ffffff',
   black: '#000000',
 
-  // Chat specific
-  bubbleMe: '#22c55e', // 绿色气泡
+  bubbleMe: '#3AA882',
   bubbleOther: '#2a2a2a',
   bubbleTextMe: '#ffffff',
   bubbleTextOther: '#f1f5f9',
 
   offline: '#64748b',
-  online: '#22c55e',
+  online: '#3AA882',
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
