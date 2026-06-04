@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ export const SettingsScreen: React.FC = () => {
   const { theme, toggleTheme, isDark, colors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [showLanguageModal, setShowLanguageModal] = React.useState(false);
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const handleLogout = () => {
     logout();
@@ -173,10 +174,10 @@ const LanguageOption: React.FC<LanguageOptionProps> = ({ title, selected, onPres
       style={[languageOptionStyles.languageOption, selected && { backgroundColor: colors.primary }]}
       onPress={onPress}
     >
-      <Text style={[languageOptionStyles.languageOptionText, selected && { color: '#fff' }, !selected && { color: colors.text }]}>
+      <Text style={[languageOptionStyles.languageOptionText, selected && { color: colors.white }, !selected && { color: colors.text }]}>
         {title}
       </Text>
-      {selected && <Ionicons name="checkmark" size={20} color="#fff" />}
+      {selected && <Ionicons name="checkmark" size={20} color={colors.white} />}
     </TouchableOpacity>
   );
 };
@@ -222,7 +223,7 @@ const languageOptionStyles = StyleSheet.create({
   },
 });
 
-const styles = StyleSheet.create({
+const createStyles = (c: any) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   avatarText: {
-    color: '#fff',
+    color: c.white,
     fontSize: 32,
     fontWeight: '700',
   },
@@ -249,11 +250,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#1e293b',
+    color: c.text,
   },
   userId: {
     fontSize: 14,
-    color: '#64748b',
+    color: c.textSecondary,
   },
   scrollView: {
     flex: 1,
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontSize: 16,
-    color: '#ef4444',
+    color: c.error,
     fontWeight: '600',
   },
   modalOverlay: {

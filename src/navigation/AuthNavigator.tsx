@@ -3,18 +3,21 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { AuthScreen } from '../screens/auth/AuthScreen';
 import { MainNavigator } from './MainNavigator';
 import { RootStackParamList } from '../types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// 加载组件
-const LoadingScreen: React.FC = () => (
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color="#3AA882" />
-  </View>
-);
+const LoadingScreen: React.FC = () => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
+};
 
 export const AppNavigator: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -37,7 +40,6 @@ export const AppNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#f8fafc',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -185,10 +185,10 @@ const LanguageOption: React.FC<LanguageOptionProps> = ({ title, selected, onPres
       style={[languageOptionStyles.languageOption, selected && { backgroundColor: colors.primary }]}
       onPress={onPress}
     >
-      <Text style={[languageOptionStyles.languageOptionText, selected && { color: '#fff' }, !selected && { color: colors.text }]}>
+      <Text style={[languageOptionStyles.languageOptionText, selected && { color: colors.white }, !selected && { color: colors.text }]}>
         {title}
       </Text>
-      {selected && <Ionicons name="checkmark" size={20} color="#fff" />}
+      {selected && <Ionicons name="checkmark" size={20} color={colors.white} />}
     </TouchableOpacity>
   );
 };
@@ -214,7 +214,7 @@ const createStyles = (colors: any) =>
       marginBottom: 16,
     },
     avatarText: {
-      color: '#fff',
+      color: colors.white,
       fontSize: 32,
       fontWeight: '700',
     },

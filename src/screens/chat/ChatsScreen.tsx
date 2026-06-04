@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,8 +13,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Friend } from '../../types';
 
 export const ChatsScreen: React.FC = () => {
-  const { friends, isLoadingFriends, loadFriends, setActiveChat } = useChat();
   const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { friends, isLoadingFriends, loadFriends, setActiveChat } = useChat();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export const ChatsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (c: any) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarText: {
-    color: '#fff',
+    color: c.white,
     fontSize: 18,
     fontWeight: '600',
   },
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   badgeText: {
-    color: '#fff',
+    color: c.white,
     fontSize: 12,
     fontWeight: '600',
   },

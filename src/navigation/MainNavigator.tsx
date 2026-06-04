@@ -65,7 +65,7 @@ const TabNavigator: React.FC = () => {
 
 // 主导航器 (包含 Tab 和 Chat 页面)
 export const MainNavigator: React.FC = () => {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -80,7 +80,7 @@ export const MainNavigator: React.FC = () => {
           headerShown: true,
           headerBackTitleVisible: false,
           title: (route.params?.friend as Friend)?.username || '聊天',
-          headerStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
+          headerStyle: { backgroundColor: colors.background },
           headerTitleStyle: { fontSize: 18, fontWeight: '600', color: colors.text },
           headerTintColor: colors.primary,
         })}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 export const AuthScreen: React.FC = () => {
   const { login, register } = useAuth();
   const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -94,9 +95,9 @@ export const AuthScreen: React.FC = () => {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.white} />
             ) : (
-              <Text style={styles.buttonText}>
+              <Text style={[styles.buttonText, { color: colors.white }]}>
                 {isLogin ? '登录' : '注册'}
               </Text>
             )}
@@ -121,7 +122,7 @@ export const AuthScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (c: any) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -162,7 +163,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
