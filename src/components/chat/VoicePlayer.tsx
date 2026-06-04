@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useTheme } from '../../contexts/ThemeContext';
 import { normalizeImageUrl } from '../../services/api';
 
@@ -19,74 +19,33 @@ interface VoicePlayerProps {
 
 export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe }) => {
   const { colors } = useTheme();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [playbackPosition, setPlaybackPosition] = useState(0);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const player = useAudioPlayer({ uri: normalizeImageUrl(uri) });
+  const status = useAudioPlayerStatus(player);
 
   // 6条波形动画
   const waveAnimations = useRef(
     [0, 1, 2, 3, 4, 5].map(() => new Animated.Value(0.3))
   ).current;
 
-  useEffect(() => {
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, [sound]);
-
   const formatTime = (seconds: number) => {
     return `${Math.floor(seconds)}"`;
   };
 
-  const handlePlayPause = async () => {
-    if (isPlaying) {
-      if (sound) {
-        await sound.pauseAsync();
-        setIsPlaying(false);
-        stopWaveAnimation();
-      }
+  const handlePlayPause = () => {
+    if (status.playing) {
+      player.pause();
+      stopWaveAnimation();
     } else {
-      try {
-        setIsLoading(true);
-
-        const normalizedUri = normalizeImageUrl(uri);
-
-        if (!sound) {
-          const { sound: newSound } = await Audio.Sound.createAsync(
-            { uri: normalizedUri },
-            { shouldPlay: true },
-            onPlaybackStatusUpdate
-          );
-          setSound(newSound);
-        } else {
-          await sound.playAsync();
-        }
-
-        setIsPlaying(true);
-        setIsLoading(false);
-        startWaveAnimation();
-      } catch (error) {
-        console.error('播放语音失败:', error);
-        setIsLoading(false);
-      }
+      player.play();
+      startWaveAnimation();
     }
   };
 
-  const onPlaybackStatusUpdate = (status: any) => {
-    if (status.isLoaded) {
-      setPlaybackPosition(status.positionMillis / 1000);
-
-      if (status.didJustFinish) {
-        setIsPlaying(false);
-        setPlaybackPosition(0);
-        stopWaveAnimation();
-        sound?.setPositionAsync(0);
-      }
+  useEffect(() => {
+    if (status.didJustFinish) {
+      stopWaveAnimation();
     }
-  };
+  }, [status.didJustFinish]);
 
   const startWaveAnimation = () => {
     const animations = waveAnimations.map((anim, i) =>
@@ -107,7 +66,6 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
       )
     );
 
-    // 错开动画时间
     animations.forEach((anim, i) => {
       setTimeout(() => anim.start(), i * 50);
     });
@@ -120,7 +78,6 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
     });
   };
 
-  // 波形显示
   const renderWaves = () => {
     return [0, 1, 2, 3, 4, 5].map((i) => (
       <Animated.View
@@ -131,7 +88,7 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
             backgroundColor: isMe ? 'rgba(255, 255, 255, 0.8)' : colors.primary,
             transform: [
               {
-                scaleY: isPlaying
+                scaleY: status.playing
                   ? waveAnimations[i].interpolate({
                       inputRange: [0, 1],
                       outputRange: [0.3, 1],
@@ -151,11 +108,10 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
       onPress={handlePlayPause}
       activeOpacity={0.7}
     >
-      {/* 播放按钮 - 匹配 H5 样式 */}
       <View style={[styles.playButton, isMe ? [styles.playButtonMe, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }] : [styles.playButtonOther, { backgroundColor: colors.borderLight }]]}>
-        {isLoading ? (
+        {status.isBuffering ? (
           <Ionicons name="reload" size={12} color={isMe ? colors.white : colors.primary} />
-        ) : isPlaying ? (
+        ) : status.playing ? (
           <Ionicons name="pause" size={12} color={isMe ? colors.white : colors.primary} />
         ) : (
           <View style={styles.playIconWrapper}>
@@ -164,12 +120,10 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
         )}
       </View>
 
-      {/* 波形 */}
       <View style={styles.wavesContainer}>{renderWaves()}</View>
 
-      {/* 时长 */}
       <Text style={[styles.duration, { color: isMe ? colors.white : colors.textLight }, isMe && { color: colors.white }]}>
-        {formatTime(isPlaying ? playbackPosition : duration)}
+        {formatTime(status.playing ? status.currentTime : duration)}
       </Text>
     </TouchableOpacity>
   );

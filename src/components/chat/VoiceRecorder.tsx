@@ -7,7 +7,13 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { Audio } from 'expo-av';
+import {
+  useAudioRecorder,
+  useAudioRecorderState,
+  AudioModule,
+  setAudioModeAsync,
+  RecordingPresets,
+} from 'expo-audio';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -20,7 +26,8 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSend }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [cancel, setCancel] = useState(false);
-  const recordingRef = useRef<Audio.Recording | null>(null);
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const recorderState = useAudioRecorderState(audioRecorder);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const translateX = useRef(new Animated.Value(0)).current;
 
@@ -31,21 +38,18 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSend }) => {
 
       onPanResponderGrant: async () => {
         try {
-          const permission = await Audio.requestPermissionsAsync();
-          if (!permission.granted) {
+          const { granted } = await AudioModule.requestRecordingPermissionsAsync();
+          if (!granted) {
             return;
           }
 
-          await Audio.setAudioModeAsync({
-            allowsRecordingIOS: true,
-            playsInSilentModeIOS: true,
+          setAudioModeAsync({
+            allowsRecording: true,
+            playsInSilentMode: true,
           });
 
-          const { recording } = await Audio.Recording.createAsync(
-            Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-          );
-
-          recordingRef.current = recording;
+          await audioRecorder.prepareToRecordAsync();
+          audioRecorder.record();
           setIsRecording(true);
           setCancel(false);
           setRecordingTime(0);
@@ -62,7 +66,6 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSend }) => {
         const { dx } = gestureState;
         translateX.setValue(dx);
 
-        // 滑动超过 100px 视为取消
         if (dx < -100) {
           setCancel(true);
         } else {
@@ -78,25 +81,20 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSend }) => {
         }
 
         if (cancel) {
-          // 取消录音
-          if (recordingRef.current) {
-            await recordingRef.current.stopAndUnloadAsync();
-            recordingRef.current = null;
+          if (recorderState.isRecording) {
+            await audioRecorder.stop();
           }
           setIsRecording(false);
           setRecordingTime(0);
         } else {
-          // 完成录音
-          if (recordingRef.current) {
-            await recordingRef.current.stopAndUnloadAsync();
-            const uri = recordingRef.current.getURI();
-            const status = await recordingRef.current.getStatus();
+          if (recorderState.isRecording) {
+            await audioRecorder.stop();
+            const uri = audioRecorder.uri;
+            const finalStatus = await audioRecorder.getStatus();
 
-            if (uri && status.durationMillis) {
-              onSend(uri, Math.round(status.durationMillis / 1000));
+            if (uri && finalStatus.durationMillis) {
+              onSend(uri, Math.round(finalStatus.durationMillis / 1000));
             }
-
-            recordingRef.current = null;
           }
           setIsRecording(false);
           setRecordingTime(0);

@@ -12,7 +12,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Audio } from 'expo-av';
+import {
+  useAudioRecorder,
+  useAudioRecorderState,
+  AudioModule,
+  setAudioModeAsync,
+  RecordingPresets,
+} from 'expo-audio';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface ChatInputProps {
@@ -35,7 +41,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const { colors } = useTheme();
   const [showActions, setShowActions] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const recorderState = useAudioRecorderState(audioRecorder);
 
   const handleSend = () => {
     if (value.trim()) {
@@ -91,22 +98,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const startRecording = async () => {
     try {
-      const permission = await Audio.requestPermissionsAsync();
-      if (!permission.granted) {
+      const { granted } = await AudioModule.requestRecordingPermissionsAsync();
+      if (!granted) {
         Alert.alert('权限', '需要麦克风权限才能录音');
         return;
       }
 
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
+      setAudioModeAsync({
+        allowsRecording: true,
+        playsInSilentMode: true,
       });
 
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-
-      setRecording(recording);
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
       setIsRecording(true);
     } catch (error) {
       console.error('录音失败:', error);
@@ -114,23 +118,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const stopRecording = async () => {
-    if (!recording) return;
+    if (!recorderState.isRecording) return;
 
     setIsRecording(false);
 
     try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      const status = await recording.getStatusAsync();
+      await audioRecorder.stop();
+      const uri = audioRecorder.uri;
+      const finalStatus = await audioRecorder.getStatus();
 
-      // 至少 0.5 秒才发送
-      if (uri && status.durationMillis && status.durationMillis > 500) {
-        await onVoiceSend(uri, Math.round(status.durationMillis / 1000));
-      } else if (status.durationMillis && status.durationMillis <= 500) {
+      if (uri && finalStatus.durationMillis && finalStatus.durationMillis > 500) {
+        await onVoiceSend(uri, Math.round(finalStatus.durationMillis / 1000));
+      } else if (finalStatus.durationMillis && finalStatus.durationMillis <= 500) {
         console.warn('录音时间太短');
       }
-
-      setRecording(null);
     } catch (error) {
       console.error('停止录音失败:', error);
     }
@@ -138,7 +139,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.card, borderTopColor: colors.borderLight }]}>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => setShowActions(!showActions)}
@@ -150,7 +151,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <TextInput
           style={[
             styles.input,
-            !enterKeySends && styles.inputMultiline
+            !enterKeySends && styles.inputMultiline,
+            { backgroundColor: colors.borderLight, color: colors.text }
           ]}
           value={value}
           onChangeText={onChangeText}
@@ -165,7 +167,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
         {value.trim() ? (
           <TouchableOpacity
-            style={styles.sendButton}
+            style={[styles.sendButton, { backgroundColor: colors.primary }]}
             onPress={handleSend}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
@@ -201,7 +203,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onPress={() => setShowActions(false)}
           >
             <TouchableOpacity
-              style={styles.actionsPanel}
+              style={[styles.actionsPanel, { backgroundColor: colors.card }]}
               activeOpacity={1}
               onPress={(e) => e.stopPropagation()}
             >
@@ -223,8 +225,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       {/* 录音指示器 */}
       {isRecording ? (
         <View style={styles.recordingIndicator}>
-          <View style={styles.recordingDot} />
-          <Text style={styles.recordingText}>录音中...</Text>
+          <View style={[styles.recordingDot, { backgroundColor: colors.error }]} />
+          <Text style={[styles.recordingText, { color: colors.white }]}>录音中...</Text>
         </View>
       ) : null}
     </>
@@ -238,12 +240,13 @@ interface ActionItemProps {
 }
 
 const ActionItem: React.FC<ActionItemProps> = ({ icon, label, onPress }) => {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.actionItem} onPress={onPress}>
-      <View style={styles.actionIcon}>
+      <View style={[styles.actionIcon, { backgroundColor: colors.borderLight }]}>
         <Ionicons name={icon as any} size={28} color={colors.primary} />
       </View>
-      <Text style={styles.actionLabel}>{label}</Text>
+      <Text style={[styles.actionLabel, { color: colors.text }]}>{label}</Text>
     </TouchableOpacity>
   );
 };
@@ -254,9 +257,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
   },
   iconButton: {
     width: 44,
@@ -268,13 +269,11 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: colors.borderLight,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 15,
     height: 40,
-    color: colors.text,
     marginRight: 12,
   },
   inputMultiline: {
@@ -285,7 +284,6 @@ const styles = StyleSheet.create({
   sendButton: {
     width: 40,
     height: 40,
-    backgroundColor: colors.primary,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -296,7 +294,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   actionsPanel: {
-    backgroundColor: colors.white,
     flexDirection: 'row',
     paddingVertical: 24,
     paddingHorizontal: 32,
@@ -310,7 +307,6 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 56,
     height: 56,
-    backgroundColor: colors.borderLight,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
@@ -318,7 +314,6 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: 14,
-    color: colors.text,
   },
   recordingIndicator: {
     position: 'absolute',
@@ -335,11 +330,9 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.error,
     marginRight: 8,
   },
   recordingText: {
-    color: colors.white,
     fontSize: 14,
   },
 });
