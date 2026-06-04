@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../types';
@@ -32,6 +33,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
     typingUsers,
   } = useChat();
 
+  const { enterKeySends } = useAuth();
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -177,6 +179,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         onSend={handleSend}
         onImageSend={handleImageSend}
         onVoiceSend={handleVoiceSend}
+        enterKeySends={enterKeySends}
       />
     </KeyboardAvoidingView>
   );

@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { ChatsScreen } from '../screens/chat/ChatsScreen';
 import { FriendsScreen } from '../screens/chat/FriendsScreen';
-import { ProfileScreen } from '../screens/chat/ProfileScreen';
+import { SettingsScreen } from '../screens/chat/SettingsScreen';
 import { ChatScreen } from '../screens/chat/ChatScreen';
 import { MainTabParamList, RootStackParamList, Friend } from '../types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -51,12 +51,12 @@ const TabNavigator: React.FC = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
-          tabBarLabel: '我的',
+          tabBarLabel: '设置',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />

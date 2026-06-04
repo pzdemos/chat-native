@@ -70,7 +70,7 @@ export type RootStackParamList = {
 export type MainTabParamList = {
   Chats: undefined;
   Friends: undefined;
-  Profile: undefined;
+  Settings: undefined;
 };
 
 import type { RouteProp, NavigationProp } from '@react-navigation/native';

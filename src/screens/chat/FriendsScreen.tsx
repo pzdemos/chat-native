@@ -11,13 +11,17 @@ import {
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 import { api } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
 import { Friend, FriendRequest } from '../../types';
+import { RootStackParamList } from '../../types';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export const FriendsScreen: React.FC = () => {
-  const { friends, loadFriends } = useChat();
+  const { friends, loadFriends, setActiveChat } = useChat();
   const { user } = useAuth();
+  const navigation = useNavigation<NativeStackScreenProps<RootStackParamList, 'Chat'>>();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -86,16 +90,22 @@ export const FriendsScreen: React.FC = () => {
 
   const renderFriend = useCallback(({ item }: { item: Friend }) => {
     return (
-      <View style={styles.friendItem}>
+      <TouchableOpacity
+        style={styles.friendItem}
+        onPress={() => {
+          setActiveChat(item);
+          navigation.navigate('Chat', { friend: item });
+        }}
+      >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
             {item.username.charAt(0).toUpperCase()}
           </Text>
         </View>
         <Text style={styles.friendName}>{item.username}</Text>
-      </View>
+      </TouchableOpacity>
     );
-  }, []);
+  }, [navigation, setActiveChat]);
 
   const renderSearchResult = useCallback(({ item }: { item: Friend }) => {
     return (
@@ -272,7 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#f1f5f9',
   },
   avatar: {

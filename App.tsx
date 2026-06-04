@@ -28,9 +28,11 @@ const AppNavigatorWithStatusBar = () => {
   const { isDark } = require('./src/contexts/ThemeContext').useTheme();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
+    <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
-      <AppNavigator />
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#000000' : '#ffffff' }} edges={['top', 'left', 'right']}>
+        <AppNavigator />
+      </SafeAreaView>
+    </>
   );
 };
