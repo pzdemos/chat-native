@@ -15,7 +15,7 @@ import { Audio } from 'expo-av';
 
 // 与 H5 版本匹配的颜色
 const Colors = {
-  primary: '#3b82f6',
+  primary: '#22c55e',
   slate50: '#f8fafc',
   slate100: '#f1f5f9',
   slate400: '#94a3b8',

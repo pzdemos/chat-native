@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   recordButtonActive: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     borderRadius: 20,
   },
 });

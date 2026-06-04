@@ -21,13 +21,13 @@ export const ChatNavigator: React.FC<ChatNavigatorProps> = ({ friend }) => {
           onPress={() => navigation.goBack()}
           style={styles.headerButton}
         >
-          <Ionicons name="arrow-back" size={24} color="#3b82f6" />
+          <Ionicons name="arrow-back" size={24} color="#22c55e" />
         </TouchableOpacity>
       ),
       headerTitle: friend.username,
       headerRight: () => (
         <TouchableOpacity style={styles.headerButton}>
-          <Ionicons name="ellipsis-vertical" size={24} color="#3b82f6" />
+          <Ionicons name="ellipsis-vertical" size={24} color="#22c55e" />
         </TouchableOpacity>
       ),
     });

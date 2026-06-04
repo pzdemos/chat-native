@@ -113,7 +113,7 @@ export const FriendsScreen: React.FC = () => {
           style={styles.addButton}
           onPress={() => handleSendRequest(item.userId, item.username)}
         >
-          <Ionicons name="person-add" size={20} color="#3b82f6" />
+          <Ionicons name="person-add" size={20} color="#22c55e" />
         </TouchableOpacity>
       </View>
     );
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   acceptButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   searchButton: {
     width: 48,
     height: 48,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

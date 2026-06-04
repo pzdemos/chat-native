@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#3b82f6',
+    color: '#22c55e',
     marginBottom: 8,
   },
   subtitle: {
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#22c55e',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   switchText: {
-    color: '#3b82f6',
+    color: '#22c55e',
     fontSize: 14,
   },
 });
