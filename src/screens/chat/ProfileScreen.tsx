@@ -13,7 +13,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export const ProfileScreen: React.FC = () => {
-  const { user, logout, enterKeySends, setEnterKeySends } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme, isDark, colors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [showLanguageModal, setShowLanguageModal] = React.useState(false);
@@ -61,14 +61,6 @@ export const ProfileScreen: React.FC = () => {
           title={t('modal.language')}
           value={language === 'zh' ? '中文' : 'English'}
           onPress={() => setShowLanguageModal(true)}
-          colors={colors}
-          showArrow
-        />
-        <MenuItem
-          icon="return-down-forward-outline"
-          title={enterKeySends ? '回车发送' : '回车换行'}
-          value={enterKeySends ? '发送' : '换行'}
-          onPress={() => setEnterKeySends(!enterKeySends)}
           colors={colors}
           showArrow
         />
