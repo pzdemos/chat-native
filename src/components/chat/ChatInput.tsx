@@ -52,7 +52,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const handleSubmitEditing = () => {
-    if (enterKeySends && value.trim()) {
+    if (value.trim()) {
       onSend();
     }
   };
@@ -165,9 +165,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           placeholder="输入消息..."
           placeholderTextColor={Colors.slate400}
           multiline={!enterKeySends}
-          returnKeyType={enterKeySends ? 'send' : 'done'}
+          returnKeyType="send"
           onSubmitEditing={handleSubmitEditing}
-          blurOnSubmit={enterKeySends ? false : true}
+          blurOnSubmit={false}
           textAlignVertical={!enterKeySends ? 'top' : 'center'}
         />
 
