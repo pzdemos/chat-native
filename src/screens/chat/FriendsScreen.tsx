@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   Modal,
-  Platform,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -167,7 +166,7 @@ export const FriendsScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
       {/* 顶部栏 */}
-      <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }, Platform.OS === 'android' && styles.topBarAndroid]}>
+      <View style={[styles.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <Text style={[styles.topBarTitle, { color: colors.text }]}>好友</Text>
         <TouchableOpacity
           onPress={() => setShowAddModal(true)}
@@ -282,9 +281,6 @@ const createStyles = (c: FriendsColors) => StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  topBarAndroid: {
-    paddingTop: 12,
   },
   topBarTitle: {
     fontSize: 22,

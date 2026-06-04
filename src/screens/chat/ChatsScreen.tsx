@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Platform,
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -89,11 +88,7 @@ export const ChatsScreen: React.FC = () => {
           keyExtractor={(item) => item.userId}
           refreshing={isLoadingFriends}
           onRefresh={loadFriends}
-          contentContainerStyle={
-            friends.length === 0
-              ? styles.emptyList
-              : { paddingTop: Platform.OS === 'android' ? 8 : 0 }
-          }
+          contentContainerStyle={friends.length === 0 ? styles.emptyList : undefined}
         />
       )}
     </View>

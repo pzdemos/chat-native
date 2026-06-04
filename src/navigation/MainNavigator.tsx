@@ -20,7 +20,10 @@ const TabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerTitle: '',
+        headerTransparent: true,
+        headerStyle: { backgroundColor: 'transparent', shadowOpacity: 0, elevation: 0, borderWidth: 0 },
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
@@ -34,7 +37,6 @@ const TabNavigator: React.FC = () => {
         name="Chats"
         component={ChatsScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubbles-outline" size={size} color={color} />
           ),
@@ -44,7 +46,6 @@ const TabNavigator: React.FC = () => {
         name="Friends"
         component={FriendsScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
           ),
@@ -54,7 +55,6 @@ const TabNavigator: React.FC = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
           ),
