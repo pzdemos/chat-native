@@ -24,6 +24,7 @@ const TabNavigator: React.FC = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
         tabBarStyle: {
+          backgroundColor: colors.card,
           borderTopColor: colors.border,
         },
       }}
