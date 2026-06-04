@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import { useTheme } from '../../contexts/ThemeContext';
 import { normalizeImageUrl } from '../../services/api';
 
 interface VoicePlayerProps {
@@ -16,17 +17,8 @@ interface VoicePlayerProps {
   isMe: boolean;
 }
 
-// H5 版本匹配的颜色
-const colors = {
-  primary: '#22c55e',
-  slate50: '#f8fafc',
-  slate400: '#94a3b8',
-  slate800: '#1e293b',
-  green50: '#f0fdf4',
-  white: '#ffffff',
-};
-
 export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe }) => {
+  const { colors } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [playbackPosition, setPlaybackPosition] = useState(0);
@@ -160,7 +152,7 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
       activeOpacity={0.7}
     >
       {/* 播放按钮 - 匹配 H5 样式 */}
-      <View style={[styles.playButton, isMe ? styles.playButtonMe : styles.playButtonOther]}>
+      <View style={[styles.playButton, isMe ? [styles.playButtonMe, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }] : [styles.playButtonOther, { backgroundColor: colors.borderLight }]]}>
         {isLoading ? (
           <Ionicons name="reload" size={12} color={isMe ? colors.white : colors.primary} />
         ) : isPlaying ? (
@@ -176,7 +168,7 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({ uri, duration, isMe })
       <View style={styles.wavesContainer}>{renderWaves()}</View>
 
       {/* 时长 */}
-      <Text style={[styles.duration, isMe && styles.durationMe]}>
+      <Text style={[styles.duration, { color: isMe ? colors.white : colors.textLight }, isMe && { color: colors.white }]}>
         {formatTime(isPlaying ? playbackPosition : duration)}
       </Text>
     </TouchableOpacity>
@@ -208,9 +200,7 @@ const styles = StyleSheet.create({
   playButtonMe: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
-  playButtonOther: {
-    backgroundColor: colors.slate50,
-  },
+  playButtonOther: {},
   playIconWrapper: {
     marginLeft: 2,
   },
@@ -229,11 +219,8 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontSize: 10,
-    color: colors.slate400,
     fontWeight: '500',
     marginLeft: 12,
   },
-  durationMe: {
-    color: colors.green50,
-  },
+  durationMe: {},
 });
