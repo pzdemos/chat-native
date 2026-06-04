@@ -4,7 +4,7 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  KeyboardAvoidingView,
+  Keyboard,
   Platform,
   Alert,
 } from 'react-native';
@@ -38,6 +38,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const { enterKeySends } = useAuth();
   const { colors } = useTheme();
   const [inputText, setInputText] = useState('');
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -69,9 +70,18 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [messages.length]);
 
   useEffect(() => {
-    // 进入聊天页面时标记消息为已读
     markAsRead(friend.userId);
   }, [friend.userId]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    const show = Keyboard.addListener('keyboardWillShow', e => {
+      setKeyboardHeight(e.endCoordinates.height);
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 50);
+    });
+    const hide = Keyboard.addListener('keyboardWillHide', () => setKeyboardHeight(0));
+    return () => { show.remove(); hide.remove(); };
+  }, []);
 
   const handleSend = () => {
     if (inputText.trim()) {
@@ -83,7 +93,6 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const handleInputChange = (text: string) => {
     setInputText(text);
 
-    // 发送正在输入状态
     if (userId && text.length > 0) {
       socketService.emitTyping({ fromUserId: userId, toUserId: friend.userId });
 
@@ -155,17 +164,14 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   }, [isMe, handleRecall, handleDelete]);
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.borderLight }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}
-    >
+    <View style={[styles.container, { backgroundColor: colors.borderLight }, Platform.OS === 'ios' && { paddingBottom: keyboardHeight }]}>
       <FlatList
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item) => item._id || item.timestamp}
         contentContainerStyle={styles.messagesList}
+        keyboardShouldPersistTaps="handled"
         ListFooterComponent={<View style={{ height: 8 }} />}
         onContentSizeChange={() => {
           if (messages.length > 0) {
@@ -183,7 +189,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         onVoiceSend={handleVoiceSend}
         enterKeySends={enterKeySends}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

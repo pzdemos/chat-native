@@ -90,6 +90,7 @@ export const MainNavigator: React.FC = () => {
         component={ChatScreen}
         options={({ route }) => ({
           headerShown: true,
+          headerBackTitleVisible: false,
           title: (route.params?.friend as Friend)?.username || '聊天',
           headerStyle: { backgroundColor: isDark ? '#000000' : '#ffffff' },
           headerTitleStyle: { fontSize: 18, fontWeight: '600', color: colors.text },
