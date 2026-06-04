@@ -81,13 +81,11 @@ export const MainNavigator: React.FC = () => {
           headerShown: true,
           headerBackTitleVisible: false,
           title: (route.params?.friend as Friend)?.username || '聊天',
-          headerStyle: { backgroundColor: colors.background },
+          headerStyle: Platform.OS === 'android'
+            ? { backgroundColor: colors.background, height: 56 }
+            : { backgroundColor: colors.background },
           headerTitleStyle: { fontSize: 18, fontWeight: '600', color: colors.text },
           headerTintColor: colors.primary,
-          // Android: 设置更合理的 header 高度
-          ...(Platform.OS === 'android' && {
-            headerHeight: 56,
-          }),
         })}
       />
     </Stack.Navigator>
