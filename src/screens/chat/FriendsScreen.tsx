@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useChat } from '../../contexts/ChatContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { api } from '../../services/api';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export const FriendsScreen: React.FC = () => {
   const { friends, loadFriends, setActiveChat } = useChat();
   const { user } = useAuth();
+  const { colors } = useTheme();
   const navigation = useNavigation<NativeStackScreenProps<RootStackParamList, 'Chat'>>();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
@@ -91,82 +93,82 @@ export const FriendsScreen: React.FC = () => {
   const renderFriend = useCallback(({ item }: { item: Friend }) => {
     return (
       <TouchableOpacity
-        style={styles.friendItem}
+        style={[styles.friendItem, { borderBottomColor: colors.borderLight }]}
         onPress={() => {
           setActiveChat(item);
           navigation.navigate('Chat', { friend: item });
         }}
       >
-        <View style={styles.avatar}>
+        <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
             {item.username.charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={styles.friendName}>{item.username}</Text>
+        <Text style={[styles.friendName, { color: colors.text }]}>{item.username}</Text>
       </TouchableOpacity>
     );
-  }, [navigation, setActiveChat]);
+  }, [navigation, setActiveChat, colors]);
 
   const renderSearchResult = useCallback(({ item }: { item: Friend }) => {
     return (
-      <View style={styles.searchItem}>
-        <View style={styles.avatar}>
+      <View style={[styles.searchItem, { borderBottomColor: colors.borderLight }]}>
+        <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
           <Text style={styles.avatarText}>
             {item.username.charAt(0).toUpperCase()}
           </Text>
         </View>
         <View style={styles.searchInfo}>
-          <Text style={styles.searchName}>{item.username}</Text>
-          <Text style={styles.searchId}>ID: {item.userId}</Text>
+          <Text style={[styles.searchName, { color: colors.text }]}>{item.username}</Text>
+          <Text style={[styles.searchId, { color: colors.textLight }]}>ID: {item.userId}</Text>
         </View>
         <TouchableOpacity
-          style={styles.addButton}
+          style={[styles.addButton, { backgroundColor: colors.borderLight }]}
           onPress={() => handleSendRequest(item.userId, item.username)}
         >
-          <Ionicons name="person-add" size={20} color="#22c55e" />
+          <Ionicons name="person-add" size={20} color={colors.primary} />
         </TouchableOpacity>
       </View>
     );
-  }, []);
+  }, [colors, handleSendRequest]);
 
   const renderRequest = useCallback(({ item }: { item: FriendRequest }) => {
     return (
-      <View style={styles.requestItem}>
+      <View style={[styles.requestItem, { borderBottomColor: colors.borderLight }]}>
         <View style={styles.requestLeft}>
-          <View style={styles.avatarSmall}>
+          <View style={[styles.avatarSmall, { backgroundColor: colors.primary }]}>
             <Text style={styles.avatarTextSmall}>
               {item.fromUsername.charAt(0).toUpperCase()}
             </Text>
           </View>
           <View>
-            <Text style={styles.requestName}>{item.fromUsername}</Text>
-            <Text style={styles.requestText}>请求添加你为好友</Text>
+            <Text style={[styles.requestName, { color: colors.text }]}>{item.fromUsername}</Text>
+            <Text style={[styles.requestText, { color: colors.textSecondary }]}>请求添加你为好友</Text>
           </View>
         </View>
         <View style={styles.requestActions}>
           <TouchableOpacity
-            style={styles.acceptButton}
+            style={[styles.acceptButton, { backgroundColor: colors.primary }]}
             onPress={() => handleRespondRequest(item._id, true)}
           >
             <Text style={styles.acceptButtonText}>接受</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.rejectButton}
+            style={[styles.rejectButton, { backgroundColor: colors.borderLight }]}
             onPress={() => handleRespondRequest(item._id, false)}
           >
-            <Text style={styles.rejectButtonText}>拒绝</Text>
+            <Text style={[styles.rejectButtonText, { color: colors.textSecondary }]}>拒绝</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
-  }, []);
+  }, [colors, handleRespondRequest]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.borderLight }]}>
       {/* 好友请求列表 */}
       {requests.length > 0 && (
-        <View style={styles.requestsSection}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.requestsSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
             好友请求 ({requests.length})
           </Text>
           <FlatList
@@ -179,11 +181,11 @@ export const FriendsScreen: React.FC = () => {
       )}
 
       {/* 好友列表 */}
-      <View style={styles.friendsSection}>
-        <Text style={styles.sectionTitle}>我的好友 ({friends.length})</Text>
+      <View style={[styles.friendsSection, { backgroundColor: colors.card }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>我的好友 ({friends.length})</Text>
         {friends.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>暂无好友</Text>
+            <Text style={[styles.emptyText, { color: colors.textLight }]}>暂无好友</Text>
           </View>
         ) : (
           <FlatList
@@ -197,7 +199,7 @@ export const FriendsScreen: React.FC = () => {
 
       {/* 添加好友按钮 */}
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: colors.primary }]}
         onPress={() => setShowAddModal(true)}
       >
         <Ionicons name="person-add" size={24} color="#fff" />
@@ -211,24 +213,25 @@ export const FriendsScreen: React.FC = () => {
         onRequestClose={() => setShowAddModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>添加好友</Text>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>添加好友</Text>
               <TouchableOpacity onPress={() => setShowAddModal(false)}>
-                <Ionicons name="close" size={24} color="#64748b" />
+                <Ionicons name="close" size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
             <View style={styles.searchBar}>
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, { backgroundColor: colors.borderLight, color: colors.text }]}
                 placeholder="搜索用户名或 ID"
+                placeholderTextColor={colors.textLight}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 onSubmitEditing={handleSearch}
               />
               <TouchableOpacity
-                style={styles.searchButton}
+                style={[styles.searchButton, { backgroundColor: colors.primary }]}
                 onPress={handleSearch}
               >
                 {loading ? (
@@ -246,7 +249,7 @@ export const FriendsScreen: React.FC = () => {
               style={styles.searchResults}
               ListEmptyComponent={
                 searchQuery.length > 0 ? (
-                  <Text style={styles.noResults}>无搜索结果</Text>
+                  <Text style={[styles.noResults, { color: colors.textLight }]}>无搜索结果</Text>
                 ) : null
               }
             />
